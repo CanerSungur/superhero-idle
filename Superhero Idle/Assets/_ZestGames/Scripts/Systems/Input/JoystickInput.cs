@@ -8,12 +8,7 @@ namespace ZestGames
         [SerializeField] private Joystick joystick;
 
         public Vector3 InputValue { get; private set; }
-        public bool CanTakeInput { get; private set; }
-
-        public void Init()
-        {
-            CanTakeInput = true;
-        }
+        public bool CanTakeInput => GameManager.GameState == Enums.GameState.Started;
 
         private void Update()
         {
