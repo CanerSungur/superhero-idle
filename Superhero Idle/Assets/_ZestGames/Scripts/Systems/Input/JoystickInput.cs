@@ -8,7 +8,19 @@ namespace ZestGames
         [SerializeField] private Joystick joystick;
 
         public Vector3 InputValue { get; private set; }
-        public bool CanTakeInput => GameManager.GameState == Enums.GameState.Started;
+        public bool CanTakeInput => GameManager.GameState == Enums.GameState.Started && Time.time >= _delayedTime;
+        private float _delayedTime;
+        private readonly float _delayRate = 2f;
+
+        private void OnEnable()
+        {
+            GameEvents.OnGameStart += () => _delayedTime = Time.time + _delayRate;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnGameStart -= () => _delayedTime = Time.time + _delayRate;
+        }
 
         private void Update()
         {
