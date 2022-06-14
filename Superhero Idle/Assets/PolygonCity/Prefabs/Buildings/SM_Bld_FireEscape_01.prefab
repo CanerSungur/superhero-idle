@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 468664}
   - component: {fileID: 3359940}
   - component: {fileID: 2352296}
+  - component: {fileID: -6888684918357527489}
   m_Layer: 0
   m_Name: SM_Bld_FireEscape_01
   m_TagString: Untagged
@@ -81,3 +82,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &-6888684918357527489
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178404}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.6250001, y: 0.74600005, z: 0.822}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -1.6910001, y: 0.21300001, z: 0.822}
+  m_TimeToStationary: 0.5

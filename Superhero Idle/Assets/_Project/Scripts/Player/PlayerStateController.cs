@@ -9,11 +9,12 @@ namespace SuperheroIdle
         public Enums.PlayerState CurrentState => _currentState;
 
         private GameObject _civillian, _hero;
-        private readonly float _heroTime = 5f;
+        private readonly float _heroTime = 30f;
         private float _finishTimeForHero;
 
         [Header("-- EFFECT SETUP --")]
         [SerializeField] private ParticleSystem changeSmokePS;
+        [SerializeField] private GameObject capeObj;
 
         public void Init(Player player)
         {
@@ -46,6 +47,7 @@ namespace SuperheroIdle
 
             _civillian.SetActive(true);
             _hero.SetActive(false);
+            capeObj.SetActive(false);
         }
 
         private void ChangeToHero()
@@ -55,6 +57,7 @@ namespace SuperheroIdle
 
             _civillian.SetActive(false);
             _hero.SetActive(true);
+            capeObj.SetActive(true);
 
             _finishTimeForHero = Time.time + _heroTime;
         }

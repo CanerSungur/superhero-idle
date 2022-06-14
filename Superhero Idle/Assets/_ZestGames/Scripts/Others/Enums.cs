@@ -7,5 +7,6 @@ namespace ZestGames
         public enum PoolStamp { Something }
         public enum AudioType { Testing_PlayerMove, Button_Click }
         public enum PlayerState { Civillian, Hero }
+        public enum CivillianType { WithBag, WithoutBag }
     }
 }
