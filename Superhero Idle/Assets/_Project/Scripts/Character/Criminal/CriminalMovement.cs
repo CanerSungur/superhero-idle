@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using ZestCore.Ai;
 using ZestCore.Utility;
+using ZestGames;
 
 namespace SuperheroIdle
 {
@@ -10,7 +11,8 @@ namespace SuperheroIdle
     {
         private Criminal _criminal;
         private NavMeshAgent _agent;
-        private Vector3 _currentTargetPosition;
+        private Vector3 _currentWalkTargetPosition;
+        private Transform _currentAttackTransform;
         private bool _targetReached = false;
         private readonly float _randomWalkPosRadius = 50f;
 
@@ -28,10 +30,10 @@ namespace SuperheroIdle
             _runToAttackSpeed = speed * 1.5f;
             _runAwaySpeed = speed * 2f;
 
-            _currentTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
+            _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
             Motor();
 
-            _criminal.OnDecideToAttack += DecidedToAttack;
+            _criminal.OnProceedAttack += ProceedAttack;
             _criminal.OnAttack += Stop;
             _criminal.OnDefeated += Defeated;
             _criminal.OnRunAway += RunAway;
@@ -41,7 +43,7 @@ namespace SuperheroIdle
         {
             if (!_criminal) return;
 
-            _criminal.OnDecideToAttack -= DecidedToAttack;
+            _criminal.OnProceedAttack -= ProceedAttack;
             _criminal.OnAttack -= Stop;
             _criminal.OnDefeated -= Defeated;
             _criminal.OnRunAway -= RunAway;
@@ -49,16 +51,18 @@ namespace SuperheroIdle
 
         private void Update()
         {
-            if (_criminal.IsAttacking)
-                ChaseClosestCivillian();
+            if (_criminal.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
 
-            if (Operation.IsTargetReached(transform, _currentTargetPosition, 3f) && !_targetReached)
+            if (_criminal.IsAttacking)
+                ChaseClosestAttackTransform();
+
+            if (Operation.IsTargetReached(transform, _currentWalkTargetPosition, 3f) && !_targetReached)
             {
                 _targetReached = true;
                 if (_criminal.IsAttacking)
                 {
                     _criminal.OnAttack?.Invoke();
-                    _criminal.TargetCivillian.OnGetAttacked?.Invoke(_criminal);
+                    ActivateRelevantVictim();
                 }
                 else
                 {
@@ -66,36 +70,31 @@ namespace SuperheroIdle
 
                     Delayer.DoActionAfterDelay(this, 3f, () =>
                     {
-                        _currentTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
+                        _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
                         Motor();
                     });
                 }
             }
         }
 
+        #region MOVEMENT FUNCTIONS
         public void Motor()
         {
             _targetReached = false;
-            _agent.SetDestination(_currentTargetPosition);
+            _agent.SetDestination(_currentWalkTargetPosition);
             _criminal.OnWalk?.Invoke();
         }
-        private void ChaseClosestCivillian()
+        private void ChaseClosestAttackTransform()
         {
-            _agent.SetDestination(_criminal.TargetCivillian.transform.position);
-            _currentTargetPosition = _criminal.TargetCivillian.transform.position;
-            transform.LookAt(_criminal.TargetCivillian.transform);
+            _agent.SetDestination(_currentAttackTransform.position);
+            _currentWalkTargetPosition = _currentAttackTransform.position;
+         
+            if (_targetReached) // To avoid rotation mix up when criminal is attacking.
+            {
+                transform.LookAt(_currentAttackTransform);
+                transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+            }
         }
-        private Vector3 RandomNavMeshLocation(float radius)
-        {
-            Vector3 randomDirection = Random.insideUnitSphere * radius;
-            randomDirection += transform.position;
-            NavMeshHit hit;
-            Vector3 finalPosition = Vector3.zero;
-            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
-                finalPosition = hit.position;
-            return finalPosition;
-        }
-
         private void Stop()
         {
             _targetReached = true;
@@ -108,12 +107,41 @@ namespace SuperheroIdle
             _targetReached = false;
             _agent.isStopped = false;
 
-            _currentTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
+            _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
             Motor();
         }
-        private void DecidedToAttack() => _agent.speed = _runToAttackSpeed;
+        #endregion
+
+
+        private void ProceedAttack(Enums.CriminalAttackType attackType)
+        {
+            if (attackType == Enums.CriminalAttackType.Civillian)
+                _currentAttackTransform = _criminal.TargetCivillian.transform;
+            else if (attackType == Enums.CriminalAttackType.ATM)
+                _currentAttackTransform = _criminal.TargetAtm.transform;
+
+            _agent.speed = _runToAttackSpeed;
+        }
+        private void ActivateRelevantVictim()
+        {
+            if (_criminal.AttackType == Enums.CriminalAttackType.Civillian)
+                _criminal.TargetCivillian.OnGetAttacked?.Invoke(_criminal);
+            else if (_criminal.AttackType == Enums.CriminalAttackType.ATM)
+                _criminal.TargetAtm.OnGetAttacked?.Invoke();
+        }
+        private Vector3 RandomNavMeshLocation(float radius)
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * radius;
+            randomDirection += transform.position;
+            NavMeshHit hit;
+            Vector3 finalPosition = Vector3.zero;
+            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+                finalPosition = hit.position;
+            return finalPosition;
+        }
         private void Defeated()
         {
+            Stop();
             Debug.Log("Defeated Criminal!");
         }
     }

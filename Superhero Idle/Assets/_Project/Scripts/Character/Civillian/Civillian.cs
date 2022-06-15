@@ -6,18 +6,21 @@ namespace SuperheroIdle
 {
     public class Civillian : CharacterBase
     {
+        [Header("-- SETUP --")]
         [SerializeField] private Enums.CivillianType type;
-        public Enums.CivillianType Type => type;
-
-        private Criminal _attackingCriminal;
-        public Criminal AttackingCriminal => _attackingCriminal;
-
+        [SerializeField] private float clapTime = 5f;
+         
         #region EVENTS
         public Action OnRescued;
         public Action<Criminal> OnGetAttacked;
         #endregion
 
+        #region PROPERTIES
+        public Enums.CivillianType Type => type;
+        public float ClapTime => clapTime;
+        public Criminal AttackingCriminal { get; private set; }
         public bool IsBeingAttacked { get; private set; }
+        #endregion
 
         private void OnEnable()
         {
@@ -26,6 +29,7 @@ namespace SuperheroIdle
             IsBeingAttacked = false;
 
             OnGetAttacked += GetAttacked;
+            OnRescued += Rescued;
         }
 
         private void OnDisable()
@@ -33,12 +37,18 @@ namespace SuperheroIdle
             CharacterManager.RemoveCivillian(this);
 
             OnGetAttacked -= GetAttacked;
+            OnRescued -= Rescued;
         }
 
         private void GetAttacked(Criminal criminal)
         {
             IsBeingAttacked = true;
-            _attackingCriminal = criminal;
+            AttackingCriminal = criminal;
+        }
+        private void Rescued()
+        {
+            CharacterManager.AddCivillian(this);
+            IsBeingAttacked = false;
         }
     }
 }

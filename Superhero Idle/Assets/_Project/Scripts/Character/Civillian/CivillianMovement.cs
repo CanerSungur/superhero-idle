@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using ZestCore.Ai;
 using ZestCore.Utility;
+using ZestGames;
 
 namespace SuperheroIdle
 {
@@ -43,6 +44,8 @@ namespace SuperheroIdle
 
         private void Update()
         {
+            if (_civillian.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
+
             if (_civillian.IsBeingAttacked)
                 transform.LookAt(_civillian.AttackingCriminal.transform);
 
@@ -56,6 +59,8 @@ namespace SuperheroIdle
                     Motor();
                 });
             }
+
+            //transform.rotation = Quaternion.LookRotation(_agent.velocity, Vector3.up);
         }
 
         public void Motor()
@@ -84,11 +89,13 @@ namespace SuperheroIdle
         }
         private void Rescued()
         {
-            _targetReached = false;
-            _agent.isStopped = false;
-            
-            _currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
-            Motor();
+            Delayer.DoActionAfterDelay(this, _civillian.ClapTime, () => {
+                _targetReached = false;
+                _agent.isStopped = false;
+
+                _currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
+                Motor();
+            });
         }
         private void Defeated()
         {

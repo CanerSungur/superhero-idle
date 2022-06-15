@@ -1,4 +1,5 @@
 using UnityEngine;
+using ZestGames;
 
 namespace SuperheroIdle
 {
@@ -16,6 +17,7 @@ namespace SuperheroIdle
 
         private readonly int _withBagAttack = 1;
         private readonly int _withoutBagAttack = 2;
+        private readonly int _atmAttack = 3;
 
         public void Init(CharacterBase character)
         {
@@ -26,6 +28,7 @@ namespace SuperheroIdle
             _criminal.OnWalk += Walk;
             _criminal.OnDefeated += Defeated;
 
+            _criminal.OnProceedAttack += SetAttackIndex;
             _criminal.OnDecideToAttack += DecideToAttack;
             _criminal.OnAttack += Attack;
             _criminal.OnRunAway += RunAway;
@@ -38,7 +41,8 @@ namespace SuperheroIdle
             _criminal.OnIdle -= Idle;
             _criminal.OnWalk -= Walk;
             _criminal.OnDefeated -= Defeated;
-            
+
+            _criminal.OnProceedAttack -= SetAttackIndex;
             _criminal.OnDecideToAttack -= DecideToAttack;
             _criminal.OnAttack -= Attack;
             _criminal.OnRunAway -= RunAway;
@@ -48,8 +52,31 @@ namespace SuperheroIdle
         public void Walk() => _animator.SetBool(_walkID, true);
         public void Defeated() => _animator.SetTrigger(_defeatedID);
 
-        private void DecideToAttack() => _animator.SetTrigger(_decidedToAttackID);
+        private void DecideToAttack()
+        {
+            _animator.SetTrigger(_decidedToAttackID);
+        }
+        private void SetAttackIndex(Enums.CriminalAttackType attackType)
+        {
+            if (attackType == Enums.CriminalAttackType.Civillian)
+            {
+                if (_criminal.TargetCivillian.Type == Enums.CivillianType.WithBag)
+                    _animator.SetInteger(_attackIndexID, _withBagAttack);
+                else if (_criminal.TargetCivillian.Type == Enums.CivillianType.WithoutBag)
+                    _animator.SetInteger(_attackIndexID, _withoutBagAttack);
+            }
+            else if (attackType == Enums.CriminalAttackType.ATM)
+                _animator.SetInteger(_attackIndexID, _atmAttack);
+        }
+
         private void Attack() => _animator.SetTrigger(_attackID);
         private void RunAway() => _animator.SetTrigger(_runAwayID);
+
+        #region ANIMATION EVENT FUNCTIONS
+        public void HitAtm()
+        {
+            _criminal.TargetAtm.OnGetHit?.Invoke();
+        }
+        #endregion
     }
 }

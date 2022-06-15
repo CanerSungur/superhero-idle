@@ -37,5 +37,39 @@ namespace SuperheroIdle
                 CriminalsInScene.Remove(criminal);
         }
         #endregion
+
+        #region ATMS
+        private static List<ATM> _atmsInScene;
+        public static List<ATM> AtmsInScene => _atmsInScene == null ? _atmsInScene = new List<ATM>() : _atmsInScene;
+
+        public static void AddATM(ATM atm)
+        {
+            if (!AtmsInScene.Contains(atm))
+                AtmsInScene.Add(atm);
+        }
+
+        public static void RemoveATM(ATM atm)
+        {
+            if (AtmsInScene.Contains(atm))
+                AtmsInScene.Remove(atm);
+        }
+        #endregion
+
+        #region POLICE CARS
+        private static List<PoliceCar> _policeCarsInScene;
+        public static List<PoliceCar> PoliceCarsInScene => _policeCarsInScene == null ? _policeCarsInScene = new List<PoliceCar>() : _policeCarsInScene;
+
+        public static void AddPoliceCar(PoliceCar policeCar)
+        {
+            if (!PoliceCarsInScene.Contains(policeCar))
+                PoliceCarsInScene.Add(policeCar);
+        }
+
+        public static void RemovePoliceCar(PoliceCar policeCar)
+        {
+            if (PoliceCarsInScene.Contains(policeCar))
+                PoliceCarsInScene.Remove(policeCar);
+        }
+        #endregion
     }
 }

@@ -43,4 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 092d8345903792147bccbe16fed97ca7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pools: []
+  Pools:
+  - PoolStamp: 1
+    Prefab: {fileID: 4180929082905074088, guid: df61de6564a24884bbf5e0a6cee57272, type: 3}
+    Size: 10
+  - PoolStamp: 2
+    Prefab: {fileID: 189930, guid: f539f0390d17a9f4a922b722e47998fe, type: 3}
+    Size: 2
