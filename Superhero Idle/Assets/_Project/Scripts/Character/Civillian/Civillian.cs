@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using ZestCore.Utility;
 using ZestGames;
 
 namespace SuperheroIdle
@@ -30,6 +31,7 @@ namespace SuperheroIdle
 
             OnGetAttacked += GetAttacked;
             OnRescued += Rescued;
+            OnDefeated += Defeated;
         }
 
         private void OnDisable()
@@ -38,6 +40,7 @@ namespace SuperheroIdle
 
             OnGetAttacked -= GetAttacked;
             OnRescued -= Rescued;
+            OnDefeated -= Defeated;
         }
 
         private void GetAttacked(Criminal criminal)
@@ -49,6 +52,11 @@ namespace SuperheroIdle
         {
             CharacterManager.AddCivillian(this);
             IsBeingAttacked = false;
+        }
+        private void Defeated()
+        {
+            IsBeingAttacked = false;
+            Delayer.DoActionAfterDelay(this, 10f, () => gameObject.SetActive(false));
         }
     }
 }

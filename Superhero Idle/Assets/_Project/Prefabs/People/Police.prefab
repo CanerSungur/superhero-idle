@@ -1455,6 +1455,7 @@ GameObject:
   - component: {fileID: 3796366552813479685}
   - component: {fileID: 5518847061666042541}
   - component: {fileID: 4180929082905074095}
+  - component: {fileID: 7473394606885834113}
   m_Layer: 0
   m_Name: Police
   m_TagString: Untagged
@@ -1496,7 +1497,7 @@ Animator:
   m_GameObject: {fileID: 4180929082905074088}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 897b34267f422c1499700402763d096e, type: 3}
-  m_Controller: {fileID: 9100000, guid: e4544f2f68df0ce42983d3d784509545, type: 2}
+  m_Controller: {fileID: 9100000, guid: 52771d650e37b614fa2346ab3824edaa, type: 2}
   m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1515,6 +1516,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 256761ba330f1bd4181196a4a62df5d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7473394606885834113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4180929082905074088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98b11437d8efc214baec1e0500b927d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4474691710854843003

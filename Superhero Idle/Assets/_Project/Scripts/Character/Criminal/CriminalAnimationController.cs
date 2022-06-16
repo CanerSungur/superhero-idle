@@ -1,5 +1,6 @@
 using UnityEngine;
 using ZestGames;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
@@ -14,6 +15,8 @@ namespace SuperheroIdle
         private readonly int _defeatedID = Animator.StringToHash("Defeated");
         private readonly int _decidedToAttackID = Animator.StringToHash("DecidedToAttack");
         private readonly int _attackIndexID = Animator.StringToHash("AttackIndex");
+        private readonly int _getDraggedID = Animator.StringToHash("GetDragged");
+        private readonly int _getThrownID = Animator.StringToHash("GetThrown");
 
         private readonly int _withBagAttack = 1;
         private readonly int _withoutBagAttack = 2;
@@ -27,11 +30,14 @@ namespace SuperheroIdle
             _criminal.OnIdle += Idle;
             _criminal.OnWalk += Walk;
             _criminal.OnDefeated += Defeated;
+            _criminal.OnGetTakenToPoliceCar += GetDragged;
 
             _criminal.OnProceedAttack += SetAttackIndex;
             _criminal.OnDecideToAttack += DecideToAttack;
             _criminal.OnAttack += Attack;
             _criminal.OnRunAway += RunAway;
+
+            _criminal.OnGetThrown += GetThrown;
         }
 
         private void OnDisable()
@@ -41,20 +47,33 @@ namespace SuperheroIdle
             _criminal.OnIdle -= Idle;
             _criminal.OnWalk -= Walk;
             _criminal.OnDefeated -= Defeated;
+            _criminal.OnGetTakenToPoliceCar -= GetDragged;
 
             _criminal.OnProceedAttack -= SetAttackIndex;
             _criminal.OnDecideToAttack -= DecideToAttack;
             _criminal.OnAttack -= Attack;
             _criminal.OnRunAway -= RunAway;
+
+            _criminal.OnGetThrown -= GetThrown;
         }
 
         public void Idle() => _animator.SetBool(_walkID, false);
         public void Walk() => _animator.SetBool(_walkID, true);
         public void Defeated() => _animator.SetTrigger(_defeatedID);
 
+        private void GetDragged(PoliceCar ignoreThis) => _animator.SetTrigger(_getDraggedID);
+        private void GetThrown()
+        {
+            _animator.SetTrigger(_getThrownID);
+
+            transform.DOMove(transform.position - (transform.forward * 0.7f), 1.5f).OnComplete(() => {
+                //transform.DOMove(transform.position + (transform.forward * 3), 1f);
+                transform.DOJump(transform.position + (transform.forward * 3), 0.7f, 1, 1f);
+            });
+        }
         private void DecideToAttack()
         {
-            _animator.SetTrigger(_decidedToAttackID);
+            
         }
         private void SetAttackIndex(Enums.CriminalAttackType attackType)
         {
@@ -67,6 +86,8 @@ namespace SuperheroIdle
             }
             else if (attackType == Enums.CriminalAttackType.ATM)
                 _animator.SetInteger(_attackIndexID, _atmAttack);
+
+            _animator.SetTrigger(_decidedToAttackID);
         }
 
         private void Attack() => _animator.SetTrigger(_attackID);

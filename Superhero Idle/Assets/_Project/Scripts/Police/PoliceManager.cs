@@ -1,40 +1,31 @@
 using UnityEngine;
-using System;
+using System.Collections.Generic;
 
 namespace SuperheroIdle
 {
     public class PoliceManager : MonoBehaviour
     {
-        public static Action<Criminal> OnTakeCriminal;
-
-        private void Start()
+        #region STATIC CAR LIST SYSTEM
+        public static List<PoliceCar> _freePoliceCars = new List<PoliceCar>();
+        public static PoliceCar GetNextFreePoliceCar()
         {
-            foreach (PoliceCar policeCar in CharacterManager.PoliceCarsInScene)
-                policeCar.gameObject.SetActive(false);
-
-            OnTakeCriminal += SendPolice;
+            if (_freePoliceCars.Count == 0 || _freePoliceCars == null)
+                return null;
+            else
+                return _freePoliceCars[0];
         }
 
-        private void OnDisable()
+        public static void AddFreePoliceCar(PoliceCar policeCar)
         {
-            OnTakeCriminal -= SendPolice;
+            if (!_freePoliceCars.Contains(policeCar))
+                _freePoliceCars.Add(policeCar);
         }
 
-        private void SendPolice(Criminal criminal)
+        public static void RemoveFreePoliceCar(PoliceCar policeCar)
         {
-            Debug.Log(CharacterManager.PoliceCarsInScene.Count);
-            foreach (PoliceCar policeCar in CharacterManager.PoliceCarsInScene)
-            {
-                if (policeCar.Idle || !policeCar.gameObject.activeSelf)
-                {
-                    policeCar.gameObject.SetActive(true);
-                    policeCar.transform.position = new Vector3(0,0, -5f);
-                    policeCar.SetCriminalTarget(criminal);
-                    break;
-                }
-                else
-                    Debug.Log("Police car not available!");
-            }
+            if (_freePoliceCars.Contains(policeCar))
+                _freePoliceCars.Remove(policeCar);
         }
+        #endregion
     }
 }

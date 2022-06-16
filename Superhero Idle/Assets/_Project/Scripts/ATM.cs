@@ -1,13 +1,20 @@
 using UnityEngine;
 using System;
+using ZestCore.Utility;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
     public class ATM : MonoBehaviour
     {
+        [Header("-- SETUP --")]
+        [SerializeField] private float reactivationTime = 10f;
+
         [Header("-- EFFECT SETUP --")]
-        [SerializeField] private ParticleSystem smokePS;
-        [SerializeField] private ParticleSystem moneyPS;
+        [SerializeField] private ParticleSystem hitSmokePS;
+        [SerializeField] private ParticleSystem hitMoneyPS;
+        [SerializeField] private ParticleSystem brokenSmokePS;
+        [SerializeField] private ParticleSystem brokenSparklePS;
 
         #region EVENTS
         public Action OnGetAttacked, OnDefeated, OnGetHit, OnRescued;
@@ -35,8 +42,8 @@ namespace SuperheroIdle
 
         private void GetHit()
         {
-            smokePS.Play();
-            moneyPS.Play();
+            hitSmokePS.Play();
+            hitMoneyPS.Play();
         }
         private void GetAttacked()
         {
@@ -44,8 +51,24 @@ namespace SuperheroIdle
         }
         private void Defeated()
         {
-            Debug.Log("Atm is defeated.");
+            Delayer.DoActionAfterDelay(this, reactivationTime, () => {
+                CharacterManager.AddATM(this);
+                brokenSmokePS.Stop();
+                brokenSparklePS.Stop();
+                Bounce();
+            });
+            
+            brokenSmokePS.Play();
+            brokenSparklePS.Play();
         }
         private void Rescued() => CharacterManager.AddATM(this);
+        private void Bounce()
+        {
+            transform.DORewind();
+
+            //transform.DOShakePosition(.25f, .25f);
+            //transform.DOShakeRotation(.25f, .5f);
+            transform.DOShakeScale(.5f, 1f);
+        }
     }
 }

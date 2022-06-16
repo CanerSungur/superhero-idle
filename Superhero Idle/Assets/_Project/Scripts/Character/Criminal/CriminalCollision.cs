@@ -14,9 +14,10 @@ namespace SuperheroIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Player player) && _criminal.IsAttacking)
+            if (other.TryGetComponent(out Player player) && _criminal.AttackStarted && player.StateController.CurrentState == Enums.PlayerState.Hero)
             {
                 _criminal.OnDefeated?.Invoke();
+                PeopleEvents.OnCriminalDecreased?.Invoke();
 
                 if (_criminal.AttackType == Enums.CriminalAttackType.Civillian)
                     _criminal.TargetCivillian.OnRescued?.Invoke();

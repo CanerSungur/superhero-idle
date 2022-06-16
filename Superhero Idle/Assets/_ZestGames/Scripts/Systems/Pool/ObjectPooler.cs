@@ -41,7 +41,7 @@ namespace ZestGames
                     // PoolData can have more than 1 object.
                     //GameObject obj = Instantiate(pool.PoolData.PoolObjects[Random.Range(0, pool.PoolData.PoolObjects.Length)], PoolContainer);
                     //GameObject obj = Instantiate(PoolData.PoolObjects[Random.Range(0, PoolData.PoolObjects.Length)].Prefab, PoolContainer);
-                    GameObject obj = Instantiate(pool.Prefab, poolContainer);
+                    GameObject obj = Instantiate(pool.Prefab[Random.Range(0, pool.Prefab.Length)], poolContainer);
 
                     obj.SetActive(false);
                     objectPool.Enqueue(obj);

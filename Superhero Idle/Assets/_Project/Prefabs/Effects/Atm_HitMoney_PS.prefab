@@ -4904,7 +4904,7 @@ GameObject:
   - component: {fileID: 198722438823775796}
   - component: {fileID: 199742842850441988}
   m_Layer: 0
-  m_Name: Atm_HitMoney_PS
+  m_Name: ATM_HitMoney_PS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5011,7 +5011,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.3
+      scalar: 1
       minScalar: 0.15
       maxCurve:
         serializedVersion: 2
@@ -5925,7 +5925,7 @@ ParticleSystem:
       repeatInterval: 0.01
       probability: 1
   SizeModule:
-    enabled: 1
+    enabled: 0
     curve:
       serializedVersion: 2
       minMaxState: 1

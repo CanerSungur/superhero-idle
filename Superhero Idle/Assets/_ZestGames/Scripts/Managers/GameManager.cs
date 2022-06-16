@@ -1,5 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
+using SuperheroIdle;
+using ZestCore.Utility;
 
 namespace ZestGames
 {
@@ -13,6 +15,8 @@ namespace ZestGames
         private LevelManager _levelManager;
         private SettingsManager _settingsManager;
         private DataManager _dataManager;
+        private PeopleSpawnManager _peopleSpawnManager;
+        private CrimeManager _crimeManager;
 
         private void Init()
         {
@@ -27,6 +31,10 @@ namespace ZestGames
             _settingsManager.Init(this);
             _uiManager = GetComponent<UiManager>();
             _uiManager.Init(this);
+            _peopleSpawnManager = GetComponent<PeopleSpawnManager>();
+            Delayer.DoActionAfterDelay(this, 2f, () => _peopleSpawnManager.Init(this));
+            _crimeManager = GetComponent<CrimeManager>();
+            _crimeManager.Init(this);
 
             UiEvents.OnUpdateCollectableText?.Invoke(_dataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);

@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using ZestCore.Ai;
 using ZestCore.Utility;
 using ZestGames;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
@@ -21,6 +22,8 @@ namespace SuperheroIdle
         private float _runAwaySpeed, _runToAttackSpeed;
 
         public bool IsMoving => _agent.velocity.magnitude >= 0.1f;
+        
+        private bool _isBeingTakenToPoliceCar, _hasReachedToPoliceCar;
 
         public void Init(CharacterBase character)
         {
@@ -29,6 +32,7 @@ namespace SuperheroIdle
             _agent.speed = speed;
             _runToAttackSpeed = speed * 1.5f;
             _runAwaySpeed = speed * 2f;
+            _isBeingTakenToPoliceCar = _hasReachedToPoliceCar = false;
 
             _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
             Motor();
@@ -37,6 +41,7 @@ namespace SuperheroIdle
             _criminal.OnAttack += Stop;
             _criminal.OnDefeated += Defeated;
             _criminal.OnRunAway += RunAway;
+            _criminal.OnGetTakenToPoliceCar += GetTakenToPoliceCar;
         }
 
         private void OnDisable()
@@ -47,10 +52,22 @@ namespace SuperheroIdle
             _criminal.OnAttack -= Stop;
             _criminal.OnDefeated -= Defeated;
             _criminal.OnRunAway -= RunAway;
+            _criminal.OnGetTakenToPoliceCar -= GetTakenToPoliceCar;
         }
 
         private void Update()
         {
+            if (_criminal.IsDefeated && _isBeingTakenToPoliceCar)
+            {
+                if (!Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
+                {
+                    Navigation.MoveTransform(transform, _currentWalkTargetPosition, 1f);
+                    Navigation.LookAtTarget(transform, _currentWalkTargetPosition);
+                }
+                else
+                    GetThrownToThePoliceCar();
+            }
+
             if (_criminal.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
 
             if (_criminal.IsAttacking)
@@ -142,7 +159,34 @@ namespace SuperheroIdle
         private void Defeated()
         {
             Stop();
+            _agent.enabled = false;
             Debug.Log("Defeated Criminal!");
+        }
+
+        private void GetTakenToPoliceCar(PoliceCar policeCar)
+        {
+            if (RNG.RollDice(50))
+                _currentWalkTargetPosition = policeCar.LeftDropTransform.position;
+            else
+                _currentWalkTargetPosition = policeCar.RightDropTransform.position;
+
+            _isBeingTakenToPoliceCar = true;
+        }
+        private void GetThrownToThePoliceCar()
+        {
+            if (!_hasReachedToPoliceCar)
+            {
+                _hasReachedToPoliceCar = true;
+                transform.DOLookAt(_criminal.ActivatedPoliceCar.transform.position, 2f, AxisConstraint.Y, Vector3.up).OnComplete(() => {
+                    for (int i = 0; i < _criminal.ActivatedPoliceCar.PoliceMen.Count; i++)
+                        _criminal.ActivatedPoliceCar.PoliceMen[i].OnDropCriminal?.Invoke();
+                    
+                    _isBeingTakenToPoliceCar = false;
+                    _criminal.OnGetThrown?.Invoke();
+
+                    Delayer.DoActionAfterDelay(this, 3.5f, () => gameObject.SetActive(false));
+                });
+            }
         }
     }
 }

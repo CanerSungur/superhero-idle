@@ -1,5 +1,6 @@
 using UnityEngine;
 using ZestGames;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
@@ -48,6 +49,8 @@ namespace SuperheroIdle
             _civillian.SetActive(true);
             _hero.SetActive(false);
             capeObj.SetActive(false);
+
+            Bounce();
         }
 
         private void ChangeToHero()
@@ -60,6 +63,15 @@ namespace SuperheroIdle
             capeObj.SetActive(true);
 
             _finishTimeForHero = Time.time + _heroTime;
+            Bounce();
+        }
+        private void Bounce()
+        {
+            transform.DORewind();
+
+            //transform.DOShakePosition(.25f, .25f);
+            //transform.DOShakeRotation(.25f, .5f);
+            transform.DOShakeScale(.5f, 1f);
         }
     }
 }

@@ -34,5 +34,19 @@ namespace ZestCore.Utility
                 ts[r] = tmp;
             }
         }
+
+        /// <summary>
+        /// Gives a random point on given object. 
+        /// </summary>
+        /// <param name="bounds">Given object's collider bounds</param>
+        /// <returns></returns>
+        public static Vector3 RandomPointInBounds(Bounds bounds)
+        {
+            return new Vector3(
+                    Random.Range(bounds.min.x + 2f, bounds.max.x - 2f),
+                    bounds.max.y,
+                    Random.Range(bounds.min.z + 2f, bounds.max.z - 2f)
+                ); ;
+        }
     }
 }

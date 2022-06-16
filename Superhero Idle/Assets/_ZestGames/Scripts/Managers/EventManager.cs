@@ -30,4 +30,9 @@ namespace ZestGames
     {
         public static Action OnTapHappened, OnTouchStarted, OnTouchStopped;
     }
+
+    public static class PeopleEvents
+    {
+        public static Action OnCriminalDecreased, OnCivillianDecreased;
+    }
 }

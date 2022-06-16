@@ -6,7 +6,7 @@ namespace ZestGames
     public class Pool
     {
         public Enums.PoolStamp PoolStamp;
-        public GameObject Prefab;
+        public GameObject[] Prefab;
         public int Size;
     }
 }
