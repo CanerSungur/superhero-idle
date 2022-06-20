@@ -9,6 +9,7 @@ namespace SuperheroIdle
     {
         private CriminalCollision _collisionHandler;
         private CrimeDurationHandler _crimeDurationHandler;
+        private CriminalEffectHandler _effectHandler;
 
         private Transform _leftCarryPoint, _rightCarryPoint;
         public Transform LeftCarryPoint => _leftCarryPoint;
@@ -40,15 +41,20 @@ namespace SuperheroIdle
         {
             _rightCarryPoint = transform.GetChild(transform.childCount - 1);
             _leftCarryPoint = transform.GetChild(transform.childCount - 2);
+
             AttackStarted = false;
 
             CharacterManager.AddCriminal(this);
             Init();
+
             _collisionHandler = GetComponent<CriminalCollision>();
             _collisionHandler.Init(this);
             _crimeDurationHandler = GetComponent<CrimeDurationHandler>();
             //Delayer.DoActionAfterDelay(this, 0.5f, () => _crimeDurationHandler.Init(this));
             _crimeDurationHandler.Init(this);
+            _effectHandler = GetComponent<CriminalEffectHandler>();
+            //Delayer.DoActionAfterDelay(this, 0.2f, () => _effectHandler.Init(this));
+            _effectHandler.Init(this);
 
             OnAttack += StartAttacking;
             OnDecideToAttack += ActivateAttack;
@@ -130,7 +136,7 @@ namespace SuperheroIdle
             PeopleEvents.OnCivillianDecreased?.Invoke();
             PeopleEvents.OnCriminalDecreased?.Invoke();
 
-            Delayer.DoActionAfterDelay(this, 10f, () => gameObject.SetActive(false));
+            Delayer.DoActionAfterDelay(this, 9f, () => gameObject.SetActive(false));
         }
 
         #region FIND FUNCTIONS

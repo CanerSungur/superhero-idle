@@ -10,6 +10,7 @@ namespace SuperheroIdle
         public Enums.PlayerState CurrentState => _currentState;
 
         private GameObject _civillian, _hero;
+        private SkinnedMeshRenderer _heroMesh;
         private readonly float _heroTime = 30f;
         private float _finishTimeForHero;
 
@@ -21,16 +22,21 @@ namespace SuperheroIdle
         {
             _civillian = transform.GetChild(0).gameObject;
             _hero = transform.GetChild(1).gameObject;
+            _heroMesh = _hero.GetComponent<SkinnedMeshRenderer>();
             ChangeToCivillian();
 
             PlayerEvents.OnChangeToCivillian += ChangeToCivillian;
             PlayerEvents.OnChangeToHero += ChangeToHero;
+            PlayerEvents.OnStartFighting += DisableMesh;
+            PlayerEvents.OnStopFighting += EnableMesh;
         }
 
         private void OnDisable()
         {
             PlayerEvents.OnChangeToCivillian -= ChangeToCivillian;
             PlayerEvents.OnChangeToHero -= ChangeToHero;
+            PlayerEvents.OnStartFighting -= DisableMesh;
+            PlayerEvents.OnStopFighting -= EnableMesh;
         }
 
         private void Update()
@@ -73,5 +79,8 @@ namespace SuperheroIdle
             //transform.DOShakeRotation(.25f, .5f);
             transform.DOShakeScale(.5f, 1f);
         }
+
+        public void DisableMesh(Criminal ignoreThis) => _heroMesh.enabled = false;
+        public void EnableMesh(Criminal ignoreThis) => _heroMesh.enabled = true;
     }
 }

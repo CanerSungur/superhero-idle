@@ -66,9 +66,9 @@ namespace SuperheroIdle
         {
             _animator.SetTrigger(_getThrownID);
 
-            transform.DOMove(transform.position - (transform.forward * 0.7f), 1.5f).OnComplete(() => {
+            transform.DOMove(transform.position - (transform.forward * 0.7f), 1f).OnComplete(() => {
                 //transform.DOMove(transform.position + (transform.forward * 3), 1f);
-                transform.DOJump(transform.position + (transform.forward * 3), 0.7f, 1, 1f);
+                transform.DOJump(transform.position + (transform.forward * 3.2f), 0.75f, 1, 1f);
             });
         }
         private void DecideToAttack()

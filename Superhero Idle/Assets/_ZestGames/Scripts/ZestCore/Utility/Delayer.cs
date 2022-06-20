@@ -16,12 +16,13 @@ namespace ZestCore.Utility
         /// <param name="action">Function you want to delay.</param>
         public static void DoActionAfterDelay(this MonoBehaviour mono, float delayTime, Action action)
         {
-            mono.StartCoroutine(ExecuteAction(delayTime, action));
+            mono.StartCoroutine(ExecuteAction(mono, delayTime, action));
         }
 
-        private static IEnumerator ExecuteAction(float delayTime, Action action)
+        private static IEnumerator ExecuteAction(this MonoBehaviour mono, float delayTime, Action action)
         {
             yield return new WaitForSeconds(delayTime);
+            if (!mono.enabled) yield break;
             action.Invoke();
             yield break;
         }

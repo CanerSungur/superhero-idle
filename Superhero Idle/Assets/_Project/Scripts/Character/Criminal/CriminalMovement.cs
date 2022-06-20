@@ -30,6 +30,7 @@ namespace SuperheroIdle
             _criminal = GetComponent<Criminal>();
             _agent = GetComponent<NavMeshAgent>();
             _agent.speed = speed;
+            _agent.radius = 0.5f;
             _runToAttackSpeed = speed * 1.5f;
             _runAwaySpeed = speed * 2f;
             _isBeingTakenToPoliceCar = _hasReachedToPoliceCar = false;
@@ -59,13 +60,16 @@ namespace SuperheroIdle
         {
             if (_criminal.IsDefeated && _isBeingTakenToPoliceCar)
             {
-                if (!Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
-                {
-                    Navigation.MoveTransform(transform, _currentWalkTargetPosition, 1f);
-                    Navigation.LookAtTarget(transform, _currentWalkTargetPosition);
-                }
-                else
+                if (Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
                     GetThrownToThePoliceCar();
+
+                //if (!Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
+                //{
+                //    Navigation.MoveTransform(transform, _currentWalkTargetPosition, 1f);
+                //    Navigation.LookAtTarget(transform, _currentWalkTargetPosition);
+                //}
+                //else
+                //    GetThrownToThePoliceCar();
             }
 
             if (_criminal.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
@@ -159,8 +163,8 @@ namespace SuperheroIdle
         private void Defeated()
         {
             Stop();
-            _agent.enabled = false;
-            Debug.Log("Defeated Criminal!");
+            //_agent.enabled = false;
+            //Debug.Log("Defeated Criminal!");
         }
 
         private void GetTakenToPoliceCar(PoliceCar policeCar)
@@ -171,11 +175,19 @@ namespace SuperheroIdle
                 _currentWalkTargetPosition = policeCar.RightDropTransform.position;
 
             _isBeingTakenToPoliceCar = true;
+
+            _agent.radius = 1f;
+            _targetReached = false;
+            _agent.isStopped = false;
+            Motor();
+
         }
         private void GetThrownToThePoliceCar()
         {
             if (!_hasReachedToPoliceCar)
             {
+                Stop();
+
                 _hasReachedToPoliceCar = true;
                 transform.DOLookAt(_criminal.ActivatedPoliceCar.transform.position, 2f, AxisConstraint.Y, Vector3.up).OnComplete(() => {
                     for (int i = 0; i < _criminal.ActivatedPoliceCar.PoliceMen.Count; i++)
@@ -184,7 +196,7 @@ namespace SuperheroIdle
                     _isBeingTakenToPoliceCar = false;
                     _criminal.OnGetThrown?.Invoke();
 
-                    Delayer.DoActionAfterDelay(this, 3.5f, () => gameObject.SetActive(false));
+                    Delayer.DoActionAfterDelay(this, 2f, () => gameObject.SetActive(false));
                 });
             }
         }

@@ -25,6 +25,7 @@ namespace SuperheroIdle
 
         private void Start()
         {
+            InputHandler.Init(this);
             CharacterController.Init(this);
             AnimationController.Init(this);
             CollisionController.Init(this);

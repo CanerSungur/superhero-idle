@@ -27,15 +27,6 @@ namespace SuperheroIdle
             _characterController = GetComponent<CharacterController>();
 
             _currentSpeed = civillianSpeed;
-
-            PlayerEvents.OnChangeToCivillian += ChangeToCivillian;
-            PlayerEvents.OnChangeToHero += ChangeToHero;
-        }
-
-        private void OnDisable()
-        {
-            PlayerEvents.OnChangeToCivillian -= ChangeToCivillian;
-            PlayerEvents.OnChangeToHero -= ChangeToHero;
         }
 
         private void Update()
@@ -72,16 +63,6 @@ namespace SuperheroIdle
         {
             if (GameManager.GameState == Enums.GameState.Started)
                 _characterController.Move(_currentSpeed * Time.deltaTime * _player.InputHandler.InputValue);
-        }
-
-        private void ChangeToCivillian()
-        {
-            _currentSpeed = civillianSpeed;
-        }
-
-        private void ChangeToHero()
-        {
-            _currentSpeed = heroSpeed;
         }
     }
 }

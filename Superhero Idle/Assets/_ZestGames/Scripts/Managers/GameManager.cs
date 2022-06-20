@@ -11,6 +11,7 @@ namespace ZestGames
         public static Enums.GameEnd GameEnd { get; private set; }
 
         [Header("-- REFERENCES --")]
+        [SerializeField] private ObjectPooler objectPooler;
         private UiManager _uiManager;
         private LevelManager _levelManager;
         private SettingsManager _settingsManager;
@@ -20,6 +21,8 @@ namespace ZestGames
 
         private void Init()
         {
+            objectPooler.Init(this);
+
             GameState = Enums.GameState.WaitingToStart;
             GameEnd = Enums.GameEnd.None;
 
@@ -32,7 +35,8 @@ namespace ZestGames
             _uiManager = GetComponent<UiManager>();
             _uiManager.Init(this);
             _peopleSpawnManager = GetComponent<PeopleSpawnManager>();
-            Delayer.DoActionAfterDelay(this, 2f, () => _peopleSpawnManager.Init(this));
+            Delayer.DoActionAfterDelay(this, 1f, () => _peopleSpawnManager.Init(this));
+            //_peopleSpawnManager.Init(this);
             _crimeManager = GetComponent<CrimeManager>();
             _crimeManager.Init(this);
 

@@ -12,16 +12,45 @@ namespace ZestGames
         public List<Pool> Pools;
         public Dictionary<Enums.PoolStamp, Queue<GameObject>> PoolDictionary;
 
+        public void Init(GameManager gameManager)
+        {
+            Instance = this;
+            poolContainer = this.transform;
+
+            PoolDictionary = new Dictionary<Enums.PoolStamp, Queue<GameObject>>();
+
+            foreach (Pool pool in Pools)
+            {
+                Queue<GameObject> objectPool = new Queue<GameObject>();
+
+                for (int i = 0; i < pool.Size; i++)
+                {
+                    // If PoolData has just 1 object;
+                    //GameObject obj = Instantiate(pool.PoolData.PoolObject, PoolContainer);
+
+                    // PoolData can have more than 1 object.
+                    //GameObject obj = Instantiate(pool.PoolData.PoolObjects[Random.Range(0, pool.PoolData.PoolObjects.Length)], PoolContainer);
+                    //GameObject obj = Instantiate(PoolData.PoolObjects[Random.Range(0, PoolData.PoolObjects.Length)].Prefab, PoolContainer);
+                    GameObject obj = Instantiate(pool.Prefab[Random.Range(0, pool.Prefab.Length)], poolContainer);
+
+                    obj.SetActive(false);
+                    objectPool.Enqueue(obj);
+                }
+
+                PoolDictionary.Add(pool.PoolStamp, objectPool);
+            }
+        }
+
         // Quick singleton to access easily.
         #region Singleton
 
         public static ObjectPooler Instance;
 
-        private void Awake()
-        {
-            Instance = this;
-            poolContainer = this.transform;
-        }
+        //private void Awake()
+        //{
+        //    Instance = this;
+        //    poolContainer = this.transform;
+        //}
 
         #endregion
 

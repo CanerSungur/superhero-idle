@@ -4,11 +4,13 @@ using ZestCore.Ai;
 using ZestCore.Utility;
 using ZestGames;
 using DG.Tweening;
+using UnityEngine.AI;
 
 namespace SuperheroIdle
 {
     public class Police : MonoBehaviour
     {
+        private NavMeshAgent _agent;
         private PoliceAnimationController _animationController;
         
         private Enums.PoliceManCarrySide _currentCarrySide;
@@ -23,7 +25,10 @@ namespace SuperheroIdle
         private void Init()
         {
             if (!_animationController)
+            {
                 _animationController = GetComponent<PoliceAnimationController>();
+                _agent = GetComponent<NavMeshAgent>();
+            }
         
             _animationController.Init(this);
             OnDropCriminal += DropCriminal;

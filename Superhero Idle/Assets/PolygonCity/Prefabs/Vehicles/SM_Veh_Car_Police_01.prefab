@@ -579,6 +579,7 @@ GameObject:
   - component: {fileID: 3376028}
   - component: {fileID: 2353164}
   - component: {fileID: 1405259508}
+  - component: {fileID: 8450739412164117806}
   m_Layer: 0
   m_Name: SM_Veh_Car_Police_01
   m_TagString: Untagged
@@ -595,7 +596,7 @@ Transform:
   m_GameObject: {fileID: 189930}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children:
   - {fileID: 418284}
   - {fileID: 462268}
@@ -681,6 +682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startTransform: {fileID: 0}
+  endTransform: {fileID: 0}
   speed: 10
   spawnPoints:
   - {fileID: 2473716552355936617}
@@ -692,6 +694,28 @@ MonoBehaviour:
   - {fileID: 7790352668560357453}
   - {fileID: 4620345779722743114}
   - {fileID: 4882879404003096583}
+--- !u!195 &8450739412164117806
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189930}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 2.2
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.5
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &196098
 GameObject:
   m_ObjectHideFlags: 0

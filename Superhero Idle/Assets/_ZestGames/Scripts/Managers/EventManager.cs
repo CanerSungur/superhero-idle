@@ -1,3 +1,4 @@
+using SuperheroIdle;
 using System;
 
 namespace ZestGames
@@ -13,6 +14,7 @@ namespace ZestGames
     public static class PlayerEvents 
     {
         public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero;
+        public static Action<Criminal> OnStartFighting, OnStopFighting;
     }
 
     public static class UiEvents
