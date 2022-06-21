@@ -46,15 +46,19 @@ MonoBehaviour:
   Pools:
   - PoolStamp: 1
     Prefab:
-    - {fileID: 4180929082905074088, guid: df61de6564a24884bbf5e0a6cee57272, type: 3}
+    - {fileID: 8766057158642619049, guid: 8054ca4a1dd092840a10bae9238fb134, type: 3}
     Size: 10
   - PoolStamp: 3
     Prefab:
-    - {fileID: 823051850377599991, guid: 58cceb451c0711349927f9799a8258df, type: 3}
-    - {fileID: 6995830759315863618, guid: b0130955744265144bbd8947d41b023f, type: 3}
-    - {fileID: 7388222829326445227, guid: 01f90f3fba3cf524f84a5a7507195d86, type: 3}
+    - {fileID: 4435621200072290655, guid: da85496b239b83f46b5d85bfe0aaed57, type: 3}
+    - {fileID: 2001633759719823858, guid: b15e0ac0ea963f44b983f676af9124ee, type: 3}
+    - {fileID: 8052592576516732432, guid: 7aa21e80c268ad44c8c9e891a39d9b9c, type: 3}
+    - {fileID: 6293554240159831233, guid: 0963b4e33486832479e29de0c0c14114, type: 3}
+    - {fileID: 1738939110044118263, guid: 2f9f06ff2ca209746ba8ea1bdc09b1b6, type: 3}
+    - {fileID: 2378188865559356662, guid: aeb9acb5154f91443a32c80081300eb5, type: 3}
+    - {fileID: 2920222726184716417, guid: e60b6ad8f037a4b4fa6cb8ec6628d7aa, type: 3}
     Size: 100
   - PoolStamp: 4
     Prefab:
-    - {fileID: 8157442074134621079, guid: 17d9bf8f21d77b642b590e18c7864d1d, type: 3}
+    - {fileID: 7327317250320945581, guid: f344627b1b545db4098a21071e0829ec, type: 3}
     Size: 30

@@ -15,28 +15,29 @@ namespace SuperheroIdle
         private Vector3 _currentWalkTargetPosition;
         private Transform _currentAttackTransform;
         private bool _targetReached = false;
-        private readonly float _randomWalkPosRadius = 50f;
+        private readonly float _randomWalkPosRadius = 10f;
 
         [Header("-- SETUP --")]
         [SerializeField] private float speed = 1f;
         private float _runAwaySpeed, _runToAttackSpeed;
 
         public bool IsMoving => _agent.velocity.magnitude >= 0.1f;
-        
-        private bool _isBeingTakenToPoliceCar, _hasReachedToPoliceCar;
+
+        private bool _isBeingTakenToPoliceCar, _hasReachedToPoliceCar, _searchPath, _hasPath;
 
         public void Init(CharacterBase character)
         {
             _criminal = GetComponent<Criminal>();
             _agent = GetComponent<NavMeshAgent>();
             _agent.speed = speed;
-            _agent.radius = 0.5f;
+            _agent.radius = 0.25f;
+            _agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             _runToAttackSpeed = speed * 1.5f;
             _runAwaySpeed = speed * 2f;
-            _isBeingTakenToPoliceCar = _hasReachedToPoliceCar = false;
+            _isBeingTakenToPoliceCar = _hasReachedToPoliceCar = _searchPath = _hasPath = false;
 
-            _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
-            Motor();
+            StartSearchingPath();
+            //Motor();
 
             _criminal.OnProceedAttack += ProceedAttack;
             _criminal.OnAttack += Stop;
@@ -62,14 +63,6 @@ namespace SuperheroIdle
             {
                 if (Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
                     GetThrownToThePoliceCar();
-
-                //if (!Operation.IsTargetReached(transform, _currentWalkTargetPosition, 1f))
-                //{
-                //    Navigation.MoveTransform(transform, _currentWalkTargetPosition, 1f);
-                //    Navigation.LookAtTarget(transform, _currentWalkTargetPosition);
-                //}
-                //else
-                //    GetThrownToThePoliceCar();
             }
 
             if (_criminal.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
@@ -77,6 +70,19 @@ namespace SuperheroIdle
             if (_criminal.IsAttacking)
                 ChaseClosestAttackTransform();
 
+            #region SEARCH PATH IF WANTED
+            if (_searchPath)
+            {
+                if (RandomNavMeshLocation(_randomWalkPosRadius) && !_hasPath)
+                {
+                    Motor();
+                    _searchPath = false;
+                    _hasPath = true;
+                }
+            }
+            #endregion
+
+            #region RE-SEARCH PATH AFTER REACHING
             if (Operation.IsTargetReached(transform, _currentWalkTargetPosition, 3f) && !_targetReached)
             {
                 _targetReached = true;
@@ -87,20 +93,43 @@ namespace SuperheroIdle
                 }
                 else
                 {
+                    _hasPath = false;
                     _criminal.OnIdle?.Invoke();
-
-                    Delayer.DoActionAfterDelay(this, 3f, () =>
-                    {
-                        _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
-                        Motor();
-                    });
+                    StartSearchingPath();
                 }
             }
+            #endregion
+
+            //if (Operation.IsTargetReached(transform, _currentWalkTargetPosition, 3f)/* && !_targetReached*/)
+            //{
+            //    //_targetReached = true;
+            //    if (_criminal.IsAttacking)
+            //    {
+            //        _criminal.OnAttack?.Invoke();
+            //        ActivateRelevantVictim();
+            //    }
+            //    else
+            //    {
+            //        if (RandomNavMeshLocation(_randomWalkPosRadius))
+            //            Motor();
+            //        else
+            //            _criminal.OnIdle?.Invoke();
+
+            //        //Delayer.DoActionAfterDelay(this, 3f, () =>
+            //        //{
+            //        //    Motor();
+            //        //});
+            //        //Motor();
+            //    }
+            //}
         }
 
         #region MOVEMENT FUNCTIONS
+        private void StartSearchingPath() => _searchPath = true;
         public void Motor()
         {
+            //RandomNavMeshLocation(_randomWalkPosRadius);
+
             _targetReached = false;
             _agent.SetDestination(_currentWalkTargetPosition);
             _criminal.OnWalk?.Invoke();
@@ -109,7 +138,7 @@ namespace SuperheroIdle
         {
             _agent.SetDestination(_currentAttackTransform.position);
             _currentWalkTargetPosition = _currentAttackTransform.position;
-         
+
             if (_targetReached) // To avoid rotation mix up when criminal is attacking.
             {
                 transform.LookAt(_currentAttackTransform);
@@ -128,11 +157,9 @@ namespace SuperheroIdle
             _targetReached = false;
             _agent.isStopped = false;
 
-            _currentWalkTargetPosition = RandomNavMeshLocation(_randomWalkPosRadius);
             Motor();
         }
         #endregion
-
 
         private void ProceedAttack(Enums.CriminalAttackType attackType)
         {
@@ -150,15 +177,40 @@ namespace SuperheroIdle
             else if (_criminal.AttackType == Enums.CriminalAttackType.ATM)
                 _criminal.TargetAtm.OnGetAttacked?.Invoke();
         }
-        private Vector3 RandomNavMeshLocation(float radius)
+        private bool RandomNavMeshLocation(float radius)
         {
             Vector3 randomDirection = Random.insideUnitSphere * radius;
             randomDirection += transform.position;
             NavMeshHit hit;
-            Vector3 finalPosition = Vector3.zero;
+
             if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
-                finalPosition = hit.position;
-            return finalPosition;
+            {
+                //if (hit.mask != NavMesh.GetAreaFromName("Walkable"))
+                //{
+                //    Debug.Log("Coudn't find a way");
+                //    return false;
+                //}
+
+                NavMeshPath _path = new NavMeshPath();
+                _agent.CalculatePath(_currentWalkTargetPosition, _path);
+
+                if (_path.status == NavMeshPathStatus.PathInvalid)
+                {
+                    //Debug.Log("Coudn't find a way");
+                    return false;
+                }
+                else
+                {
+                    _currentWalkTargetPosition = hit.position;
+                    //Debug.Log("Found a way");
+                    return true;
+                }
+            }
+            else
+            {
+                //Debug.Log("Coudn't find a way");
+                return false;
+            }
         }
         private void Defeated()
         {
@@ -176,10 +228,13 @@ namespace SuperheroIdle
 
             _isBeingTakenToPoliceCar = true;
 
-            _agent.radius = 1f;
+            //_agent.radius = 1f;
+            _agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
             _targetReached = false;
             _agent.isStopped = false;
-            Motor();
+            _targetReached = false;
+            _agent.SetDestination(_currentWalkTargetPosition);
+            //Motor();
 
         }
         private void GetThrownToThePoliceCar()
@@ -189,10 +244,11 @@ namespace SuperheroIdle
                 Stop();
 
                 _hasReachedToPoliceCar = true;
-                transform.DOLookAt(_criminal.ActivatedPoliceCar.transform.position, 2f, AxisConstraint.Y, Vector3.up).OnComplete(() => {
+                transform.DOLookAt(_criminal.ActivatedPoliceCar.transform.position, 2f, AxisConstraint.Y, Vector3.up).OnComplete(() =>
+                {
                     for (int i = 0; i < _criminal.ActivatedPoliceCar.PoliceMen.Count; i++)
                         _criminal.ActivatedPoliceCar.PoliceMen[i].OnDropCriminal?.Invoke();
-                    
+
                     _isBeingTakenToPoliceCar = false;
                     _criminal.OnGetThrown?.Invoke();
 

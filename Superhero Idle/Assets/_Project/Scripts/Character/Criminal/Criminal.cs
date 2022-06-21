@@ -42,6 +42,7 @@ namespace SuperheroIdle
             _rightCarryPoint = transform.GetChild(transform.childCount - 1);
             _leftCarryPoint = transform.GetChild(transform.childCount - 2);
 
+            ActivatedPoliceCar = null;
             AttackStarted = false;
 
             CharacterManager.AddCriminal(this);
@@ -120,6 +121,8 @@ namespace SuperheroIdle
                 PoliceCar policeCar = PoliceManager.GetNextFreePoliceCar();
                 ActivatedPoliceCar = policeCar;
                 policeCar.StartTheCar(this);
+                if (ActivatedPoliceCar == null)
+                    Debug.Log("No available police car.");
             }
             else
                 Debug.Log("No available free police car.");

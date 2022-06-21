@@ -14,9 +14,17 @@ namespace SuperheroIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.layer == LayerMask.NameToLayer("PhoneBooth") && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
+            if (other.TryGetComponent(out PhoneBooth phoneBooth) && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
             {
-                PlayerEvents.OnChangeToHero?.Invoke();
+                PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth.EntryPosition);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.TryGetComponent(out PhoneBooth phoneBooth) && phoneBooth.DoorIsOpen)
+            {
+                phoneBooth.HeroExitSuccessfully();
             }
         }
     }

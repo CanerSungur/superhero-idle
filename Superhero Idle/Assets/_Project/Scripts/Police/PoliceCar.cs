@@ -40,6 +40,7 @@ namespace SuperheroIdle
         {
             _agent = GetComponent<NavMeshAgent>();
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
+            _agent.speed = speed;
 
             if (_meshes == null)
                 _meshes = GetComponentsInChildren<MeshRenderer>();
@@ -68,7 +69,7 @@ namespace SuperheroIdle
 
         private void Update()
         {
-            if (_activatorCriminal && Operation.IsTargetReached(transform, _activatorCriminal.transform.position, 10f) && !_targetReached)
+            if (_activatorCriminal && Operation.IsTargetReached(transform, _activatorCriminal.transform.position, 15f) && !_targetReached)
             {
                 _agent.SetDestination(transform.position);
                 _targetReached = true;

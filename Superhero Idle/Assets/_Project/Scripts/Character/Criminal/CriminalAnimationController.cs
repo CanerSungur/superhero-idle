@@ -33,7 +33,6 @@ namespace SuperheroIdle
             _criminal.OnGetTakenToPoliceCar += GetDragged;
 
             _criminal.OnProceedAttack += SetAttackIndex;
-            _criminal.OnDecideToAttack += DecideToAttack;
             _criminal.OnAttack += Attack;
             _criminal.OnRunAway += RunAway;
 
@@ -50,7 +49,6 @@ namespace SuperheroIdle
             _criminal.OnGetTakenToPoliceCar -= GetDragged;
 
             _criminal.OnProceedAttack -= SetAttackIndex;
-            _criminal.OnDecideToAttack -= DecideToAttack;
             _criminal.OnAttack -= Attack;
             _criminal.OnRunAway -= RunAway;
 
@@ -70,10 +68,6 @@ namespace SuperheroIdle
                 //transform.DOMove(transform.position + (transform.forward * 3), 1f);
                 transform.DOJump(transform.position + (transform.forward * 3.2f), 0.75f, 1, 1f);
             });
-        }
-        private void DecideToAttack()
-        {
-            
         }
         private void SetAttackIndex(Enums.CriminalAttackType attackType)
         {

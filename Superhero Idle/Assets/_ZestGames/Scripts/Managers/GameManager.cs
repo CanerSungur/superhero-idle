@@ -34,8 +34,8 @@ namespace ZestGames
             _settingsManager.Init(this);
             _uiManager = GetComponent<UiManager>();
             _uiManager.Init(this);
-            _peopleSpawnManager = GetComponent<PeopleSpawnManager>();
-            Delayer.DoActionAfterDelay(this, 1f, () => _peopleSpawnManager.Init(this));
+            //_peopleSpawnManager = GetComponent<PeopleSpawnManager>();
+            //Delayer.DoActionAfterDelay(this, 1f, () => _peopleSpawnManager.Init(this));
             //_peopleSpawnManager.Init(this);
             _crimeManager = GetComponent<CrimeManager>();
             _crimeManager.Init(this);

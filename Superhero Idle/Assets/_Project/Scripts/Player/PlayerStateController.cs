@@ -9,7 +9,7 @@ namespace SuperheroIdle
         private Enums.PlayerState _currentState;
         public Enums.PlayerState CurrentState => _currentState;
 
-        private GameObject _civillian, _hero;
+        private GameObject _heroClothes;
         private SkinnedMeshRenderer _heroMesh;
         private readonly float _heroTime = 30f;
         private float _finishTimeForHero;
@@ -20,9 +20,8 @@ namespace SuperheroIdle
 
         public void Init(Player player)
         {
-            _civillian = transform.GetChild(0).gameObject;
-            _hero = transform.GetChild(1).gameObject;
-            _heroMesh = _hero.GetComponent<SkinnedMeshRenderer>();
+            _heroClothes = transform.GetChild(1).gameObject;
+            _heroMesh = _heroClothes.GetComponent<SkinnedMeshRenderer>();
             ChangeToCivillian();
 
             PlayerEvents.OnChangeToCivillian += ChangeToCivillian;
@@ -52,8 +51,7 @@ namespace SuperheroIdle
             _currentState = Enums.PlayerState.Civillian;
             changeSmokePS.Play();
 
-            _civillian.SetActive(true);
-            _hero.SetActive(false);
+            _heroClothes.SetActive(true);
             capeObj.SetActive(false);
 
             Bounce();
@@ -64,8 +62,7 @@ namespace SuperheroIdle
             _currentState = Enums.PlayerState.Hero;
             changeSmokePS.Play();
 
-            _civillian.SetActive(false);
-            _hero.SetActive(true);
+            _heroClothes.SetActive(false);
             capeObj.SetActive(true);
 
             _finishTimeForHero = Time.time + _heroTime;
