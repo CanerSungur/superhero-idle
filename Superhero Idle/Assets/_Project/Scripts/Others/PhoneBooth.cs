@@ -6,6 +6,7 @@ namespace SuperheroIdle
     public class PhoneBooth : MonoBehaviour
     {
         private Animator _animator;
+        private Collider _collider;
         public Vector3 EntryPosition { get; private set; }
         public bool DoorIsOpen { get; private set; }
 
@@ -16,6 +17,8 @@ namespace SuperheroIdle
         private void Init()
         {
             _animator = GetComponent<Animator>();
+            _collider = GetComponent<Collider>();
+            EnableTrigger();
             EntryPosition = transform.GetChild(1).position;
             DoorIsOpen = false;
 
@@ -33,8 +36,11 @@ namespace SuperheroIdle
         {
             Init();
         }
-        private void HeroEntered()
+        private void EnableTrigger() => _collider.isTrigger = true;
+        private void DisableTrigger() => _collider.isTrigger = false;
+        private void HeroEntered(PhoneBooth phoneBooth)
         {
+            if (phoneBooth != this) return;
             _animator.SetTrigger(_enterID);
             DoorIsOpen = true;
         }

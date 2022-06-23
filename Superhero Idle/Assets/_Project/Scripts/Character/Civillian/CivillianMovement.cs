@@ -32,7 +32,7 @@ namespace SuperheroIdle
             //_currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
             //Motor();
 
-            _civillian.OnGetAttacked += Stop;
+            //_civillian.OnGetAttacked += Stop;
             _civillian.OnDefeated += Defeated;
             _civillian.OnRescued += Rescued;
         }
@@ -40,7 +40,7 @@ namespace SuperheroIdle
         private void OnDisable()
         {
             if (!_civillian) return;
-            _civillian.OnGetAttacked -= Stop;
+            //_civillian.OnGetAttacked -= Stop;
             _civillian.OnDefeated -= Defeated;
             _civillian.OnRescued -= Rescued;
         }
@@ -97,35 +97,49 @@ namespace SuperheroIdle
 
         private bool RandomNavmeshLocation(float radius)
         {
-            Vector3 randomDirection = Random.insideUnitSphere * radius;
-            randomDirection += transform.position;
-            NavMeshHit hit;
+            Vector3 randomPosition = RNG.RandomPointInBounds(_civillian.BelongedPhase.Collider.bounds);
+            
+            NavMeshPath _path = new NavMeshPath();
+            _agent.CalculatePath(randomPosition, _path);
 
-            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
-            {
-                NavMeshPath _path = new NavMeshPath();
-                _agent.CalculatePath(_currentTargetPosition, _path);
-
-                if (_path.status == NavMeshPathStatus.PathInvalid)
-                {
-                    //Debug.Log("Coudn't find a way");
-                    return false;
-                }
-                else
-                {
-                    _currentTargetPosition = hit.position;
-                    //Debug.Log("Found a way");
-                    return true;
-                }
-            }
+            if (_path.status == NavMeshPathStatus.PathInvalid)
+                return false;
             else
             {
-                //Debug.Log("Coudn't find a way");
-                return false;
+                _currentTargetPosition = randomPosition;
+                return true;
             }
+
+
+            //Vector3 randomDirection = Random.insideUnitSphere * radius;
+            //randomDirection += transform.position;
+            //NavMeshHit hit;
+
+            //if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+            //{
+            //    NavMeshPath _path = new NavMeshPath();
+            //    _agent.CalculatePath(_currentTargetPosition, _path);
+
+            //    if (_path.status == NavMeshPathStatus.PathInvalid)
+            //    {
+            //        //Debug.Log("Coudn't find a way");
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        _currentTargetPosition = hit.position;
+            //        //Debug.Log("Found a way");
+            //        return true;
+            //    }
+            //}
+            //else
+            //{
+            //    //Debug.Log("Coudn't find a way");
+            //    return false;
+            //}
         }
 
-        private void Stop(Criminal criminal)
+        public void Stop()
         {
             _targetReached = true;
             _agent.isStopped = true;

@@ -66,7 +66,7 @@ namespace SuperheroIdle
 
             transform.DOMove(transform.position - (transform.forward * 0.7f), 1f).OnComplete(() => {
                 //transform.DOMove(transform.position + (transform.forward * 3), 1f);
-                transform.DOJump(transform.position + (transform.forward * 3.2f), 0.75f, 1, 1f);
+                transform.DOJump(transform.position + (transform.forward * 2.75f), 0.75f, 1, 1f);
             });
         }
         private void SetAttackIndex(Enums.CriminalAttackType attackType)
@@ -85,7 +85,7 @@ namespace SuperheroIdle
         }
 
         private void Attack() => _animator.SetTrigger(_attackID);
-        private void RunAway() => _animator.SetTrigger(_runAwayID);
+        private void RunAway(bool ignoreThis) => _animator.SetTrigger(_runAwayID);
 
         #region ANIMATION EVENT FUNCTIONS
         public void HitAtm()

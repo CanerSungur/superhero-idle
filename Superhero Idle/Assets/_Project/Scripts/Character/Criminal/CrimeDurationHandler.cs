@@ -21,7 +21,7 @@ namespace SuperheroIdle
                 _timer -= Time.deltaTime;
                 if (_timer <= 0f)
                 {
-                    _criminal.OnRunAway?.Invoke();
+                    _criminal.OnRunAway?.Invoke(true);// meaning crime is a success.
                 }
             }
         }

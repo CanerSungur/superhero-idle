@@ -15,6 +15,7 @@ namespace SuperheroIdle
         public Transform LeftCarryPoint => _leftCarryPoint;
         public Transform RightCarrypoint => _rightCarryPoint;
         public PoliceCar ActivatedPoliceCar { get; private set; }
+        public Phase BelongedPhase { get; private set; }
 
         #region PROPERTIES
         private Civillian _targetCivillian;
@@ -26,15 +27,17 @@ namespace SuperheroIdle
         #endregion
 
         #region EVENTS
-        public Action OnAttack, OnRunAway, OnDecideToAttack, OnGetThrown;
+        public Action OnAttack, OnDecideToAttack, OnGetThrown;
         public Action<Enums.CriminalAttackType> OnProceedAttack;
         public Action<PoliceCar> OnGetTakenToPoliceCar;
+        public Action<bool> OnRunAway; // true is success, false is fail
         #endregion
 
         #region CONTROLS
         private bool _isAttacking = false;
         public bool IsAttacking => _isAttacking;
         public bool AttackStarted { get; private set; }
+        public bool RunningAway { get; private set; }
         #endregion
 
         private void OnEnable()
@@ -43,9 +46,9 @@ namespace SuperheroIdle
             _leftCarryPoint = transform.GetChild(transform.childCount - 2);
 
             ActivatedPoliceCar = null;
-            AttackStarted = false;
+            AttackStarted = RunningAway = false;
 
-            CharacterManager.AddCriminal(this);
+            //CharacterManager.AddCriminal(this);
             Init();
 
             _collisionHandler = GetComponent<CriminalCollision>();
@@ -65,7 +68,9 @@ namespace SuperheroIdle
 
         private void OnDisable()
         {
-            CharacterManager.RemoveCriminal(this);
+            if (BelongedPhase)
+                BelongedPhase.RemoveActiveCriminal(this);
+            //CharacterManager.RemoveCriminal(this);
 
             OnAttack -= StartAttacking;
             OnDecideToAttack -= ActivateAttack;
@@ -97,7 +102,8 @@ namespace SuperheroIdle
         }
         private void AttackCivillian()
         {
-            _targetCivillian = FindClosestCivillian();
+            //_targetCivillian = FindClosestCivillian();
+            _targetCivillian = FindRandomCivillian();
             if (_targetCivillian == null) return;
             //OnDecidedAttackCivillian?.Invoke();
             OnProceedAttack?.Invoke(_attackType);
@@ -114,7 +120,7 @@ namespace SuperheroIdle
         private void Defeated()
         {
             _isAttacking = false;
-            AttackStarted = false;
+            AttackStarted = RunningAway = false;
 
             if (PoliceManager.GetNextFreePoliceCar() != null)
             {
@@ -128,27 +134,45 @@ namespace SuperheroIdle
                 Debug.Log("No available free police car.");
         }
         private void StartAttacking() => AttackStarted = true;
-        private void RunAway()
+        private void RunAway(bool success)
         {
             _isAttacking = AttackStarted = false;
-            if (_attackType == Enums.CriminalAttackType.Civillian)
-                _targetCivillian.OnDefeated?.Invoke();
-            else if (_attackType == Enums.CriminalAttackType.ATM)
-                _targetAtm.OnDefeated?.Invoke();
+            RunningAway = true;
 
-            PeopleEvents.OnCivillianDecreased?.Invoke();
+            if (success)
+            {
+                if (_attackType == Enums.CriminalAttackType.Civillian)
+                    _targetCivillian.OnDefeated?.Invoke();
+                else if (_attackType == Enums.CriminalAttackType.ATM)
+                    _targetAtm.OnDefeated?.Invoke();
+
+                PeopleEvents.OnCivillianDecreased?.Invoke();
+            }
+            else
+            {
+                if (_attackType == Enums.CriminalAttackType.Civillian)
+                    _targetCivillian.OnRescued?.Invoke();
+                else if (_attackType == Enums.CriminalAttackType.ATM)
+                    _targetAtm.OnRescued?.Invoke();
+            }
+
             PeopleEvents.OnCriminalDecreased?.Invoke();
-
-            Delayer.DoActionAfterDelay(this, 9f, () => gameObject.SetActive(false));
+            //Delayer.DoActionAfterDelay(this, 9f, () => gameObject.SetActive(false));
         }
 
+        public void SetBelongedPhase(Phase phase) => BelongedPhase = phase;
+
         #region FIND FUNCTIONS
+        private Civillian FindRandomCivillian()
+        {
+            if (BelongedPhase.ActiveCivillians == null || BelongedPhase.ActiveCivillians.Count == 0) return null;
+            Civillian randomCivillian = BelongedPhase.ActiveCivillians[UnityEngine.Random.Range(0, BelongedPhase.ActiveCivillians.Count)];
+            BelongedPhase.RemoveActiveCivillian(randomCivillian);
+            return randomCivillian;
+        }
         private Civillian FindClosestCivillian()
         {
-            if (CharacterManager.CivilliansInScene == null || CharacterManager.CivilliansInScene.Count == 0)
-            {
-                return null;
-            }
+            if (CharacterManager.CivilliansInScene == null || CharacterManager.CivilliansInScene.Count == 0) return null;
 
             float shortestDistance = Mathf.Infinity;
             Civillian closestCivillian = null;

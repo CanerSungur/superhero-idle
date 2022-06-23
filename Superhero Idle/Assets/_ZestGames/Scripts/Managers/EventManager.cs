@@ -14,9 +14,9 @@ namespace ZestGames
 
     public static class PlayerEvents 
     {
-        public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero, OnEnterPhoneBooth, OnExitPhoneBooth, OnExitPhoneBoothSuccessfully;
+        public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero, OnExitPhoneBooth, OnExitPhoneBoothSuccessfully;
         public static Action<Criminal> OnStartFighting, OnStopFighting;
-        public static Action<Vector3> OnGoToPhoneBooth;
+        public static Action<PhoneBooth> OnGoToPhoneBooth, OnEnterPhoneBooth;
     }
 
     public static class UiEvents

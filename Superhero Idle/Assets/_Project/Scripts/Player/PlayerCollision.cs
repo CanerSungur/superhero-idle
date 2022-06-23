@@ -16,7 +16,7 @@ namespace SuperheroIdle
         {
             if (other.TryGetComponent(out PhoneBooth phoneBooth) && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
             {
-                PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth.EntryPosition);
+                PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth);
             }
         }
 

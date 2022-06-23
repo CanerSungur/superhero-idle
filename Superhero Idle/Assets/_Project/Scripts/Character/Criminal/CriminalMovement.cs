@@ -145,13 +145,13 @@ namespace SuperheroIdle
                 transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
             }
         }
-        private void Stop()
+        public void Stop()
         {
             _targetReached = true;
             _agent.isStopped = true;
             _agent.velocity = Vector3.zero;
         }
-        private void RunAway()
+        private void RunAway(bool ignoreThis)
         {
             _agent.speed = _runAwaySpeed;
             _targetReached = false;
@@ -179,38 +179,51 @@ namespace SuperheroIdle
         }
         private bool RandomNavMeshLocation(float radius)
         {
-            Vector3 randomDirection = Random.insideUnitSphere * radius;
-            randomDirection += transform.position;
-            NavMeshHit hit;
+            Vector3 randomPosition = RNG.RandomPointInBounds(_criminal.BelongedPhase.Collider.bounds);
 
-            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
-            {
-                //if (hit.mask != NavMesh.GetAreaFromName("Walkable"))
-                //{
-                //    Debug.Log("Coudn't find a way");
-                //    return false;
-                //}
+            NavMeshPath _path = new NavMeshPath();
+            _agent.CalculatePath(randomPosition, _path);
 
-                NavMeshPath _path = new NavMeshPath();
-                _agent.CalculatePath(_currentWalkTargetPosition, _path);
-
-                if (_path.status == NavMeshPathStatus.PathInvalid)
-                {
-                    //Debug.Log("Coudn't find a way");
-                    return false;
-                }
-                else
-                {
-                    _currentWalkTargetPosition = hit.position;
-                    //Debug.Log("Found a way");
-                    return true;
-                }
-            }
+            if (_path.status == NavMeshPathStatus.PathInvalid)
+                return false;
             else
             {
-                //Debug.Log("Coudn't find a way");
-                return false;
+                _currentWalkTargetPosition = randomPosition;
+                return true;
             }
+
+            //Vector3 randomDirection = Random.insideUnitSphere * radius;
+            //randomDirection += transform.position;
+            //NavMeshHit hit;
+
+            //if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+            //{
+            //    //if (hit.mask != NavMesh.GetAreaFromName("Walkable"))
+            //    //{
+            //    //    Debug.Log("Coudn't find a way");
+            //    //    return false;
+            //    //}
+
+            //    NavMeshPath _path = new NavMeshPath();
+            //    _agent.CalculatePath(_currentWalkTargetPosition, _path);
+
+            //    if (_path.status == NavMeshPathStatus.PathInvalid)
+            //    {
+            //        //Debug.Log("Coudn't find a way");
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        _currentWalkTargetPosition = hit.position;
+            //        //Debug.Log("Found a way");
+            //        return true;
+            //    }
+            //}
+            //else
+            //{
+            //    //Debug.Log("Coudn't find a way");
+            //    return false;
+            //}
         }
         private void Defeated()
         {

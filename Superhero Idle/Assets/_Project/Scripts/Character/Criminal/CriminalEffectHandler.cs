@@ -11,17 +11,20 @@ namespace SuperheroIdle
         [Header("-- SETUP --")]
         [SerializeField] private ParticleSystem fightSmokePS;
         [SerializeField] private Animator exclamationMarkAnimator;
+        [SerializeField] private Animator runAwayMarkAnimator;
 
         public void Init(Criminal criminal)
         {
             _criminal = criminal;
             _fightSmoke = GetComponentInChildren<FightSmoke>();
             _fightSmoke.Init(_criminal);
+            DisableRunAwayMark();
 
             _criminal.OnProceedAttack += EnableExclamationMark;
             _criminal.OnAttack += DisableExclamationMark;
             _criminal.OnDefeated += DisableExclamationMark;
-            _criminal.OnRunAway += DisableExclamationMark;
+            _criminal.OnDefeated += DisableRunAwayMark;
+            _criminal.OnRunAway += EnableRunAwayMark;
 
             PlayerEvents.OnStartFighting += StartFight;
             PlayerEvents.OnStopFighting += StopFight;
@@ -32,7 +35,8 @@ namespace SuperheroIdle
             _criminal.OnProceedAttack -= EnableExclamationMark;
             _criminal.OnAttack -= DisableExclamationMark;
             _criminal.OnDefeated -= DisableExclamationMark;
-            _criminal.OnRunAway -= DisableExclamationMark;
+            _criminal.OnDefeated -= DisableRunAwayMark;
+            _criminal.OnRunAway -= EnableRunAwayMark;
 
             PlayerEvents.OnStartFighting -= StartFight;
             PlayerEvents.OnStopFighting -= StopFight;
@@ -56,8 +60,16 @@ namespace SuperheroIdle
 
         private void DisableExclamationMark()
         {
-            if (_criminal.IsDefeated) return;
             exclamationMarkAnimator.SetBool("Active", false);
+        }
+        private void EnableRunAwayMark(bool ignoreThis)
+        {
+            if (_criminal.IsDefeated) return;
+            runAwayMarkAnimator.SetBool("Active", true);
+        }
+        private void DisableRunAwayMark()
+        {
+            runAwayMarkAnimator.SetBool("Active", false);
         }
     }
 }

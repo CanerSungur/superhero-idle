@@ -21,11 +21,12 @@ namespace SuperheroIdle
         public float ClapTime => clapTime;
         public Criminal AttackingCriminal { get; private set; }
         public bool IsBeingAttacked { get; private set; }
+        public Phase BelongedPhase { get; private set; }
         #endregion
 
         private void OnEnable()
         {
-            CharacterManager.AddCivillian(this);
+            //CharacterManager.AddCivillian(this);
             Init();
             IsBeingAttacked = false;
 
@@ -36,7 +37,9 @@ namespace SuperheroIdle
 
         private void OnDisable()
         {
-            CharacterManager.RemoveCivillian(this);
+            if (BelongedPhase)
+                BelongedPhase.RemoveActiveCivillian(this);
+            //CharacterManager.RemoveCivillian(this);
 
             OnGetAttacked -= GetAttacked;
             OnRescued -= Rescued;
@@ -47,10 +50,12 @@ namespace SuperheroIdle
         {
             IsBeingAttacked = true;
             AttackingCriminal = criminal;
+            Movement.Stop();
         }
         private void Rescued()
         {
-            CharacterManager.AddCivillian(this);
+            BelongedPhase.AddActiveCivillian(this);
+            //CharacterManager.AddCivillian(this);
             IsBeingAttacked = false;
         }
         private void Defeated()
@@ -58,5 +63,7 @@ namespace SuperheroIdle
             IsBeingAttacked = false;
             Delayer.DoActionAfterDelay(this, 10f, () => gameObject.SetActive(false));
         }
+
+        public void SetBelongedPhase(Phase phase) => BelongedPhase = phase;
     }
 }

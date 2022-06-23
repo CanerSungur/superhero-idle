@@ -19,7 +19,9 @@ namespace SuperheroIdle
         private const float GRAVITY_VALUE = -5f;
         private float _currentSpeed;
         private bool _startedMoving = false;
+        
         private bool _enteringPhoneBooth = false;
+        private PhoneBooth _activatedPhoneBooth = null;
 
         public bool IsMoving => _player.InputHandler.InputValue != Vector3.zero;
         public bool IsGrounded => Physics.Raycast(_player.Collider.bounds.center, Vector3.down, _player.Collider.bounds.extents.y + 0.05f, walkableLayerMask);
@@ -78,18 +80,19 @@ namespace SuperheroIdle
             if (GameManager.GameState == Enums.GameState.Started)
                 _characterController.Move(_currentSpeed * Time.deltaTime * _player.InputHandler.InputValue);
         }
-        private void GoToPhoneBooth(Vector3 targetPosition)
+        private void GoToPhoneBooth(PhoneBooth phoneBooth)
         {
             _enteringPhoneBooth = true;
+            _activatedPhoneBooth = phoneBooth;
             transform.DORotate(Vector3.zero, 0.5f);
-            transform.DOMove(targetPosition, 0.5f).OnComplete(() => {
+            transform.DOMove(phoneBooth.EntryPosition, 0.5f).OnComplete(() => {
                 EnterPhoneBooth();
             });
         }
         private void EnterPhoneBooth()
         {
             transform.DOMove(transform.position + (transform.forward * 1.5f), 0.5f);
-            PlayerEvents.OnEnterPhoneBooth?.Invoke();
+            PlayerEvents.OnEnterPhoneBooth?.Invoke(_activatedPhoneBooth);
             Delayer.DoActionAfterDelay(this, 3f, ExitPhoneBooth);
         }
         private void ExitPhoneBooth()
