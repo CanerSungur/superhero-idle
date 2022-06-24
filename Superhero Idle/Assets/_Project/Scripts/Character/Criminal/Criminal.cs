@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using ZestGames;
-using ZestCore.Utility;
+using System.Collections;
 
 namespace SuperheroIdle
 {
@@ -40,8 +40,15 @@ namespace SuperheroIdle
         public bool RunningAway { get; private set; }
         #endregion
 
+        [Header("-- SETUP --")]
+        [SerializeField] private int value = 10;
+        private int _currentValue, _runningAwayValue;
+
         private void OnEnable()
         {
+            _runningAwayValue = (int)(value * 0.5f);
+            _currentValue = value;
+
             _rightCarryPoint = transform.GetChild(transform.childCount - 1);
             _leftCarryPoint = transform.GetChild(transform.childCount - 2);
 
@@ -122,6 +129,14 @@ namespace SuperheroIdle
             _isAttacking = false;
             AttackStarted = RunningAway = false;
 
+            StartSpawningMoney(0.05f, _currentValue, transform.position);
+            //for (int i = 0; i < value; i++)
+            //{
+            //    Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, transform.position, Quaternion.identity).GetComponent<Money2D>();
+            //    money.Init(CharacterManager.PlayerTransform.position);
+            //}
+            //CollectableEvents.OnCollect?.Invoke(value);
+
             if (PoliceManager.GetNextFreePoliceCar() != null)
             {
                 PoliceCar policeCar = PoliceManager.GetNextFreePoliceCar();
@@ -138,6 +153,7 @@ namespace SuperheroIdle
         {
             _isAttacking = AttackStarted = false;
             RunningAway = true;
+            _currentValue = _runningAwayValue;
 
             if (success)
             {
@@ -210,6 +226,23 @@ namespace SuperheroIdle
                 }
             }
             return closestAtm;
+        }
+        #endregion
+
+        #region MONEY SPAWN FUNCTIONS
+        private void StartSpawningMoney(float delay, int count, Vector3 spawnPosition) => StartCoroutine(SpawnMoney(delay, count, spawnPosition));
+        private IEnumerator SpawnMoney(float delay, int count, Vector3 spawnPosition)
+        {
+            int currentCount = 0;
+            while (currentCount < count)
+            {
+                MoneyCanvas.Instance.SpawnCollectMoney();
+                //Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, spawnPosition, Quaternion.identity).GetComponent<Money2D>();
+                //money.Collect(CharacterManager.PlayerTransform.position);
+                currentCount++;
+
+                yield return new WaitForSeconds(delay);
+            }
         }
         #endregion
     }

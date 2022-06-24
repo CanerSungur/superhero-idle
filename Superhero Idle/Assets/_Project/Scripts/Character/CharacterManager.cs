@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SuperheroIdle
 {
     public static class CharacterManager
     {
+        public static Transform PlayerTransform { get; private set; }
+        public static void SetPlayerTransform(Transform transform) => PlayerTransform = transform;
+
         #region CIVILLIANS
         private static List<Civillian> _civilliansInScene;
         public static List<Civillian> CivilliansInScene => _civilliansInScene == null ? _civilliansInScene = new List<Civillian>() : _civilliansInScene;

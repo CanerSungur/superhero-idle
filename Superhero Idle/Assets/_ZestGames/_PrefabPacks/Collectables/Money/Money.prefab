@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 3072987111084625105}
   - component: {fileID: 3072987111084625104}
   - component: {fileID: 3072987111084625119}
+  - component: {fileID: -4109850068330976373}
   m_Layer: 0
   m_Name: Money
   m_TagString: Untagged
@@ -139,7 +140,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 414b208f30b31754bbb1cd46cacb6b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 5
-  collectableStyle: 0
-  collectStyle: 0
+  value: 1
+  collectableStyle: 1
+  collectStyle: 1
   collectEffect: {fileID: 0}
+--- !u!114 &-4109850068330976373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072987111084625106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 870003b8b4279724f8fe07c1ea5ea04f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5

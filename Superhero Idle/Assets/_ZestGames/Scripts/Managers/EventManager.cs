@@ -27,7 +27,7 @@ namespace ZestGames
 
     public static class CollectableEvents
     {
-        public static Action<int> OnCollect;
+        public static Action<int> OnCollect, OnConsume;
     }
     
     public static class InputEvents

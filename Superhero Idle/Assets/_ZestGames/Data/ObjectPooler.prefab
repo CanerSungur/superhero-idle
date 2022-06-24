@@ -57,8 +57,20 @@ MonoBehaviour:
     - {fileID: 1738939110044118263, guid: 2f9f06ff2ca209746ba8ea1bdc09b1b6, type: 3}
     - {fileID: 2378188865559356662, guid: aeb9acb5154f91443a32c80081300eb5, type: 3}
     - {fileID: 2920222726184716417, guid: e60b6ad8f037a4b4fa6cb8ec6628d7aa, type: 3}
-    Size: 100
+    Size: 200
   - PoolStamp: 4
     Prefab:
     - {fileID: 7327317250320945581, guid: f344627b1b545db4098a21071e0829ec, type: 3}
     Size: 30
+  - PoolStamp: 5
+    Prefab:
+    - {fileID: 4060842857078078674, guid: dc8fb28ff4007ce4cb6b2cca156a8efc, type: 3}
+    Size: 100
+  - PoolStamp: 6
+    Prefab:
+    - {fileID: 6148218107448994617, guid: dc92fade0b064234d8aae897fde013ab, type: 3}
+    Size: 100
+  - PoolStamp: 7
+    Prefab:
+    - {fileID: 2958101101293662753, guid: 15a0c694350f5d446a809a7db3714769, type: 3}
+    Size: 100

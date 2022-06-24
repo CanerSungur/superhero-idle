@@ -1,7 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
 using SuperheroIdle;
-using ZestCore.Utility;
 
 namespace ZestGames
 {
@@ -40,7 +39,7 @@ namespace ZestGames
             _crimeManager = GetComponent<CrimeManager>();
             _crimeManager.Init(this);
 
-            UiEvents.OnUpdateCollectableText?.Invoke(_dataManager.TotalMoney);
+            UiEvents.OnUpdateCollectableText?.Invoke(DataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);
         }
 

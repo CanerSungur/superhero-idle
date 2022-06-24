@@ -80,7 +80,7 @@ namespace ZestGames
             }
         }
 
-        public GameObject SpawnFromPool(Enums.PoolStamp poolStamp, Vector3 position, Quaternion rotation)
+        public GameObject SpawnFromPool(Enums.PoolStamp poolStamp, Vector3 position, Quaternion rotation, Transform ?parent = null)
         {
             if (!PoolDictionary.ContainsKey(poolStamp))
             {
@@ -94,6 +94,8 @@ namespace ZestGames
             objectToSpawn.SetActive(true);
             objectToSpawn.transform.position = position;
             objectToSpawn.transform.rotation = rotation;
+            if (parent != null)
+                objectToSpawn.transform.SetParent(parent);
 
             // Add it back to our queue to use it later.
             PoolDictionary[poolStamp].Enqueue(objectToSpawn);
