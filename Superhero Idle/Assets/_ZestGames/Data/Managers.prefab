@@ -146,4 +146,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxCrimeDuration: 999
-  maxCrimeCount: 30

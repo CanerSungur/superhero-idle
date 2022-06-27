@@ -10,6 +10,10 @@ namespace SuperheroIdle
         private Collider _collider;
         public Collider Collider => _collider == null ? _collider = transform.GetChild(0).GetComponent<Collider>() : _collider;
 
+        [Header("-- SETUP --")]
+        [SerializeField] private int number;
+        public int Number => number;
+
         [Header("-- SPAWN SETUP --")]
         [SerializeField] private int maxCivillianCount = 50;
         [SerializeField] private int maxCriminalCount = 20;

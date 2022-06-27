@@ -6,6 +6,7 @@ namespace SuperheroIdle
 {
     public class PlayerStateController : MonoBehaviour
     {
+        private Player _player;
         private Enums.PlayerState _currentState;
         public Enums.PlayerState CurrentState => _currentState;
 
@@ -20,6 +21,7 @@ namespace SuperheroIdle
 
         public void Init(Player player)
         {
+            _player = player;
             _heroClothes = transform.GetChild(1).gameObject;
             _heroMesh = _heroClothes.GetComponent<SkinnedMeshRenderer>();
             ChangeToCivillian();
@@ -42,7 +44,7 @@ namespace SuperheroIdle
         {
             if (GameManager.GameState == Enums.GameState.GameEnded) return;
 
-            if (_currentState == Enums.PlayerState.Hero && Time.time >= _finishTimeForHero)
+            if (_currentState == Enums.PlayerState.Hero && Time.time >= _finishTimeForHero && !_player.CrimeHappeningNearby)
                 PlayerEvents.OnChangeToCivillian?.Invoke();
         }
 
@@ -71,10 +73,7 @@ namespace SuperheroIdle
         private void Bounce()
         {
             transform.DORewind();
-
-            //transform.DOShakePosition(.25f, .25f);
-            //transform.DOShakeRotation(.25f, .5f);
-            transform.DOShakeScale(.5f, 1f);
+            transform.DOShakeScale(1f, 1f);
         }
 
         public void DisableMesh(Criminal ignoreThis) => _heroMesh.enabled = false;

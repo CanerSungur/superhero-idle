@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: fe2f8c5348ebfac42a14d9296695e689
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Anime Ace 2.0 BB
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 2aac487675bbf6b49abdb40450c0d7a2, type: 3}
+  - {fileID: 12800000, guid: 66bcabb9c422bae4e8b3ececde7cf744, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

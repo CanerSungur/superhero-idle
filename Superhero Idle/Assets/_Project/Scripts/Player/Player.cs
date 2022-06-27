@@ -24,15 +24,32 @@ namespace SuperheroIdle
         public PlayerStateController StateController => _stateController == null ? _stateController = GetComponent<PlayerStateController>() : _stateController;
         #endregion
 
+        #region SPEND MONEY SECTION
         private float _currentSpendMoneyDelay;
         private readonly float _startingSpendMoneyDelay = 0.25f;
         private readonly float _delayDecreaseRate = 0.05f;
         private readonly float _minDelay = 0.001f;
         private IEnumerator _spendMoneyEnum;
 
+        // Spend value will increase by 10 in every 5 spend counts to shorten spending time immensely.
+        private int _currentMoneySpendValue, _moneySpendingCount;
+        private readonly int _moneyValueIncrementLimit = 20; 
+        private readonly int _moneyValueMultiplier = 5;
+        #endregion
+
+        #region CRIMINAL IN SIGHT SECTION
+        public bool CrimeHappeningNearby => ClosestActiveCriminal && _closestActiveCriminalDistance <= _nearbyCrimeDistanceLimit;
+        public Criminal ClosestActiveCriminal { get; private set; }
+        private float _closestActiveCriminalDistance;
+        private readonly float _nearbyCrimeDistanceLimit = 64f;
+        #endregion
+
         private void Start()
         {
+            ClosestActiveCriminal = null;
             _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
             CharacterManager.SetPlayerTransform(transform);
 
             InputHandler.Init(this);
@@ -50,19 +67,18 @@ namespace SuperheroIdle
                     PlayerEvents.OnChangeToHero?.Invoke();
                 else if (StateController.CurrentState == Enums.PlayerState.Hero)
                     PlayerEvents.OnChangeToCivillian?.Invoke();
-
-                //Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, transform.position, Quaternion.identity).GetComponent<Money2D>();
-                //money.Collect(Vector3.zero);
             }
 
-            if (Input.GetKey(KeyCode.S))
-                MoneyCanvas.Instance.SpawnCollectMoney();
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                MoneyCanvas.Instance.StartSpendingMoney();
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-                MoneyCanvas.Instance.StopSpendingMoney();
+            GetClosestActiveCriminal();
+
+            //if (Input.GetKey(KeyCode.S))
+            //    MoneyCanvas.Instance.SpawnCollectMoney();
+            //if (Input.GetKeyDown(KeyCode.A))
+            //{
+            //    MoneyCanvas.Instance.StartSpendingMoney();
+            //}
+            //if (Input.GetKeyDown(KeyCode.D))
+            //    MoneyCanvas.Instance.StopSpendingMoney();
         }
 
         #region SPEND MONEY FUNCTIONS
@@ -70,24 +86,32 @@ namespace SuperheroIdle
         {
             _spendMoneyEnum = SpendMoney(phaseUnlocker);
             _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
             StartCoroutine(_spendMoneyEnum);
+
+            // Start throwing money
+            if (phaseUnlocker.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(phaseUnlocker);
         }
 
         public void StopSpendingMoney(PhaseUnlocker phaseUnlocker)
         {
             StopCoroutine(_spendMoneyEnum);
+
+            // Stop throwing money
+            MoneyCanvas.Instance.StopSpendingMoney();
         }
 
         private IEnumerator SpendMoney(PhaseUnlocker phaseUnlocker)
         {
             while (phaseUnlocker.MoneyCanBeSpent)
             {
-                CollectableEvents.OnConsume?.Invoke(DataManager.MoneyValue);
-                //Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, transform.position + Vector3.up, Quaternion.identity).GetComponent<Money2D>();
-                //money.Spend(phaseUnlocker);
-
+                Debug.Log("Consumed Money: " + _currentMoneySpendValue);
+                phaseUnlocker.ConsumeMoney(_currentMoneySpendValue);
                 yield return new WaitForSeconds(_currentSpendMoneyDelay);
-                DecreaseMoneyDelay();
+                //DecreaseMoneyDelay();
+                UpdateMoneyValue();
             }
 
         }
@@ -96,6 +120,39 @@ namespace SuperheroIdle
             _currentSpendMoneyDelay -= _delayDecreaseRate;
             if (_currentSpendMoneyDelay <= _minDelay)
                 _currentSpendMoneyDelay = _minDelay;
+        }
+        private void UpdateMoneyValue()
+        {
+            _moneySpendingCount++;
+            if (_moneySpendingCount != 0 && _moneySpendingCount % 5 == 0)
+            {
+                _currentMoneySpendValue *= _moneyValueMultiplier;
+                Debug.Log(_currentMoneySpendValue);
+            }
+        }
+        #endregion
+
+        #region CRIMINAL SEARCH FUNCTIONS
+        private void GetClosestActiveCriminal()
+        {
+            if (CharacterManager.CriminalsCommitingCrime == null || CharacterManager.CriminalsCommitingCrime.Count == 0)
+            {
+                ClosestActiveCriminal = null;
+                _closestActiveCriminalDistance = float.MaxValue;
+            }
+            else
+            {
+                _closestActiveCriminalDistance = float.MaxValue;
+                for (int i = 0; i < CharacterManager.CriminalsCommitingCrime.Count; i++)
+                {
+                    float distanceToTransform = (transform.position - CharacterManager.CriminalsCommitingCrime[i].transform.position).sqrMagnitude;
+                    if (distanceToTransform < _closestActiveCriminalDistance && transform != CharacterManager.CriminalsCommitingCrime[i])
+                    {
+                        _closestActiveCriminalDistance = distanceToTransform;
+                        ClosestActiveCriminal = CharacterManager.CriminalsCommitingCrime[i];
+                    }
+                }
+            }
         }
         #endregion
     }

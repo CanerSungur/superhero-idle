@@ -17,6 +17,7 @@ namespace SuperheroIdle
             _rectTransform = GetComponent<RectTransform>();
             _rectTransform.anchoredPosition = _moneyCanvas.MiddlePointRectTransform.anchoredPosition;
             _rectTransform.DOAnchorPos(Hud.MoneyAnchoredPosition, 1f).OnComplete(() => {
+                CollectableEvents.OnCollect?.Invoke(DataManager.MoneyValue);
                 gameObject.SetActive(false);
             });
         }

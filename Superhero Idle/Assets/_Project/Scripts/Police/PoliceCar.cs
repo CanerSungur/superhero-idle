@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using ZestCore.Ai;
-using ZestCore.Utility;
 using ZestGames;
 using DG.Tweening;
 using System.Collections.Generic;
@@ -28,10 +27,8 @@ namespace SuperheroIdle
         [Header("-- POLICEMAN SPAWN SETUP --")]
         private Criminal _activatorCriminal = null;
 
-        private Vector3 _targetPosition, _turnPosition, _exitPosition;
-        private bool _startMoving, _targetReached, _turnReached;
-        private float _idlingTime = 2f;
-
+        private Vector3 _exitPosition;
+        private bool _targetReached;
         private MeshRenderer[] _meshes;
 
         public Action OnStartedMoving, OnStartedIdling, OnStartedLeaving;
@@ -129,15 +126,12 @@ namespace SuperheroIdle
             _activatorCriminal = criminal;
 
             PoliceManager.RemoveFreePoliceCar(this);
-            //_turnPosition = _activatorCriminal.TurnPosition;
-            _targetPosition = _activatorCriminal.transform.position;
 
             EnableMesh();
             Bounce();
 
             transform.position = startTransform.position;
             transform.rotation = Quaternion.identity;
-            _startMoving = true;
             OnStartedMoving?.Invoke();
 
             _agent.isStopped = false;
@@ -159,7 +153,6 @@ namespace SuperheroIdle
         }
         private void Leave()
         {
-            _startMoving = true;
             OnStartedMoving?.Invoke();
 
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
@@ -172,7 +165,6 @@ namespace SuperheroIdle
         {
             transform.DORewind();
 
-            //transform.DOShakePosition(.25f, .25f);
             transform.DOShakeRotation(.25f, .5f);
             transform.DOShakeScale(.25f, .5f);
         }
@@ -181,20 +173,23 @@ namespace SuperheroIdle
         {
             for (int i = 0; i < _meshes.Length; i++)
                 _meshes[i].enabled = true;
-
-            //leftTireMudPS.Play();
-            //rightTireMudPS.Play();
         }
         private void DisableMesh()
         {
-            _startMoving = _targetReached = false;
-            //transform.position = startTransform.position;
+            _targetReached = false;
 
             for (int i = 0; i < _meshes.Length; i++)
                 _meshes[i].enabled = false;
-
-            //leftTireMudPS.Stop();
-            //rightTireMudPS.Stop();
         }
+
+        #region PUBLICS
+        public void ResetCar(Criminal criminal)
+        {
+            _agent.isStopped = true;
+            _agent.velocity = Vector3.zero;
+            _activatorCriminal = null;
+            DisableMesh();
+        }
+        #endregion
     }
 }

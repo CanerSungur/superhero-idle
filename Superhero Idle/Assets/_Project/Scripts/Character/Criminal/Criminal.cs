@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using ZestGames;
 using System.Collections;
+using ZestCore.Utility;
 
 namespace SuperheroIdle
 {
@@ -43,6 +44,7 @@ namespace SuperheroIdle
         [Header("-- SETUP --")]
         [SerializeField] private int value = 10;
         private int _currentValue, _runningAwayValue;
+        private IEnumerator _disableAfterTimeEnum;
 
         private void OnEnable()
         {
@@ -78,6 +80,7 @@ namespace SuperheroIdle
             if (BelongedPhase)
                 BelongedPhase.RemoveActiveCriminal(this);
             //CharacterManager.RemoveCriminal(this);
+            CharacterManager.RemoveCriminalCommitingCrime(this);
 
             OnAttack -= StartAttacking;
             OnDecideToAttack -= ActivateAttack;
@@ -106,6 +109,8 @@ namespace SuperheroIdle
                 AttackCivillian();
             else if (_attackType == Enums.CriminalAttackType.ATM)
                 AttackATM();
+
+            CharacterManager.AddCriminalCommitingCrime(this);
         }
         private void AttackCivillian()
         {
@@ -128,14 +133,9 @@ namespace SuperheroIdle
         {
             _isAttacking = false;
             AttackStarted = RunningAway = false;
+            CharacterManager.RemoveCriminalCommitingCrime(this);
 
             StartSpawningMoney(0.05f, _currentValue, transform.position);
-            //for (int i = 0; i < value; i++)
-            //{
-            //    Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, transform.position, Quaternion.identity).GetComponent<Money2D>();
-            //    money.Init(CharacterManager.PlayerTransform.position);
-            //}
-            //CollectableEvents.OnCollect?.Invoke(value);
 
             if (PoliceManager.GetNextFreePoliceCar() != null)
             {
@@ -147,6 +147,7 @@ namespace SuperheroIdle
             }
             else
                 Debug.Log("No available free police car.");
+            DisableAfterSomeTime();
         }
         private void StartAttacking() => AttackStarted = true;
         private void RunAway(bool success)
@@ -173,9 +174,20 @@ namespace SuperheroIdle
             }
 
             PeopleEvents.OnCriminalDecreased?.Invoke();
-            //Delayer.DoActionAfterDelay(this, 9f, () => gameObject.SetActive(false));
+            DisableAfterSomeTime();
         }
 
+        private void DisableAfterSomeTime()
+        {
+            Delayer.DoActionAfterDelay(this, 30f, () => {
+                if (ActivatedPoliceCar)
+                {
+                    ActivatedPoliceCar.ResetCar(this);
+                    ActivatedPoliceCar = null;
+                }
+                gameObject.SetActive(false);
+            }, out _disableAfterTimeEnum);
+        }
         public void SetBelongedPhase(Phase phase) => BelongedPhase = phase;
 
         #region FIND FUNCTIONS
@@ -237,8 +249,6 @@ namespace SuperheroIdle
             while (currentCount < count)
             {
                 MoneyCanvas.Instance.SpawnCollectMoney();
-                //Money2D money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Money, spawnPosition, Quaternion.identity).GetComponent<Money2D>();
-                //money.Collect(CharacterManager.PlayerTransform.position);
                 currentCount++;
 
                 yield return new WaitForSeconds(delay);

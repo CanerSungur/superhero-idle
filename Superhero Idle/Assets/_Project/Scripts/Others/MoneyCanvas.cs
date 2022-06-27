@@ -9,6 +9,7 @@ namespace SuperheroIdle
         public RectTransform MiddlePointRectTransform { get; private set; }
         private WaitForSeconds _waitforSpendMoneyDelay = new WaitForSeconds(0.1f);
         private IEnumerator _spendMoneyEnum;
+        public bool SpendMoneyEnumIsPlaying { get; private set; }
 
         #region SINGLETON
         public static MoneyCanvas Instance;
@@ -18,6 +19,7 @@ namespace SuperheroIdle
                 Instance = this;
 
             MiddlePointRectTransform = transform.GetChild(0).GetComponent<RectTransform>();
+            SpendMoneyEnumIsPlaying = false;
         }
         #endregion
 
@@ -26,28 +28,32 @@ namespace SuperheroIdle
             CollectMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.CollectMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<CollectMoney>();
             money.Init(this);
         }
-        public void SpawnSpendMoney()
+        public void SpawnSpendMoney(PhaseUnlocker phaseUnlocker)
         {
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
-            money.Init(this);
-            
+            money.Init(this, phaseUnlocker);
         }
 
-        public void StartSpendingMoney()
+        public void StartSpendingMoney(PhaseUnlocker phaseUnlocker)
         {
-            _spendMoneyEnum = SpendMoney();
+            SpendMoneyEnumIsPlaying = true;
+            _spendMoneyEnum = SpendMoney(phaseUnlocker);
             StartCoroutine(_spendMoneyEnum);
         }
         public void StopSpendingMoney()
         {
-            StopCoroutine(_spendMoneyEnum);
+            if (SpendMoneyEnumIsPlaying)
+            {
+                StopCoroutine(_spendMoneyEnum);
+                SpendMoneyEnumIsPlaying = false;
+            }
         }
 
-        private IEnumerator SpendMoney()
+        private IEnumerator SpendMoney(PhaseUnlocker phaseUnlocker)
         {
-            while (true)
+            while (DataManager.TotalMoney > 0)
             {
-                SpawnSpendMoney();
+                SpawnSpendMoney(phaseUnlocker);
                 yield return _waitforSpendMoneyDelay;
             }
         }

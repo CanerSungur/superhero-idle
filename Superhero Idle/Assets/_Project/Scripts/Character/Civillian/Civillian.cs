@@ -7,6 +7,8 @@ namespace SuperheroIdle
 {
     public class Civillian : CharacterBase
     {
+        private CivillianEffectHandler _effectHandler;
+
         [Header("-- SETUP --")]
         [SerializeField] private Enums.CivillianType type;
         [SerializeField] private float clapTime = 5f;
@@ -28,6 +30,9 @@ namespace SuperheroIdle
         {
             //CharacterManager.AddCivillian(this);
             Init();
+            _effectHandler = GetComponent<CivillianEffectHandler>();
+            _effectHandler.Init(this);
+
             IsBeingAttacked = false;
 
             OnGetAttacked += GetAttacked;

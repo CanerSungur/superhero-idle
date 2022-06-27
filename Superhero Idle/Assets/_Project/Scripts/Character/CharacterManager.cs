@@ -58,5 +58,19 @@ namespace SuperheroIdle
                 AtmsInScene.Remove(atm);
         }
         #endregion
+        #region CRIMINALS COMMITING CRIME
+        private static List<Criminal> _criminalsCommitingCrime;
+        public static List<Criminal> CriminalsCommitingCrime => _criminalsCommitingCrime == null ? _criminalsCommitingCrime = new List<Criminal>() : _criminalsCommitingCrime;
+        public static void AddCriminalCommitingCrime(Criminal criminal)
+        {
+            if (!CriminalsCommitingCrime.Contains(criminal))
+                CriminalsCommitingCrime.Add(criminal);
+        }
+        public static void RemoveCriminalCommitingCrime(Criminal criminal)
+        {
+            if (CriminalsCommitingCrime.Contains(criminal))
+                CriminalsCommitingCrime.Remove(criminal);
+        } 
+        #endregion
     }
 }

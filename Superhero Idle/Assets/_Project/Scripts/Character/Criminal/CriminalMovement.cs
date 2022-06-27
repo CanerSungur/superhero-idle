@@ -173,7 +173,9 @@ namespace SuperheroIdle
         private void ActivateRelevantVictim()
         {
             if (_criminal.AttackType == Enums.CriminalAttackType.Civillian)
+            {
                 _criminal.TargetCivillian.OnGetAttacked?.Invoke(_criminal);
+            }
             else if (_criminal.AttackType == Enums.CriminalAttackType.ATM)
                 _criminal.TargetAtm.OnGetAttacked?.Invoke();
         }

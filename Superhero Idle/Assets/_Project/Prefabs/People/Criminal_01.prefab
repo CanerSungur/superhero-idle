@@ -1123,7 +1123,7 @@ GameObject:
   - component: {fileID: 7327317250320945569}
   - component: {fileID: 7327317250320945582}
   - component: {fileID: 9121857632021579944}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Criminal_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1231,6 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ac0be0588c12543a947669f2a94195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  value: 10
 --- !u!114 &7327317250320945571
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,10 +21,11 @@ namespace SuperheroIdle
             DisableRunAwayMark();
 
             _criminal.OnProceedAttack += EnableExclamationMark;
-            _criminal.OnAttack += DisableExclamationMark;
+            //_criminal.OnAttack += DisableExclamationMark;
             _criminal.OnDefeated += DisableExclamationMark;
             _criminal.OnDefeated += DisableRunAwayMark;
             _criminal.OnRunAway += EnableRunAwayMark;
+            _criminal.OnRunAway += DisableExclamationMark;
 
             PlayerEvents.OnStartFighting += StartFight;
             PlayerEvents.OnStopFighting += StopFight;
@@ -33,10 +34,11 @@ namespace SuperheroIdle
         private void OnDisable()
         {
             _criminal.OnProceedAttack -= EnableExclamationMark;
-            _criminal.OnAttack -= DisableExclamationMark;
+            //_criminal.OnAttack -= DisableExclamationMark;
             _criminal.OnDefeated -= DisableExclamationMark;
             _criminal.OnDefeated -= DisableRunAwayMark;
             _criminal.OnRunAway -= EnableRunAwayMark;
+            _criminal.OnRunAway -= DisableExclamationMark;
 
             PlayerEvents.OnStartFighting -= StartFight;
             PlayerEvents.OnStopFighting -= StopFight;
@@ -58,18 +60,13 @@ namespace SuperheroIdle
             exclamationMarkAnimator.SetBool("Active", true);
         }
 
-        private void DisableExclamationMark()
-        {
-            exclamationMarkAnimator.SetBool("Active", false);
-        }
+        private void DisableExclamationMark() => exclamationMarkAnimator.SetBool("Active", false);
+        private void DisableExclamationMark(bool ignoreThis) => exclamationMarkAnimator.SetBool("Active", false);
         private void EnableRunAwayMark(bool ignoreThis)
         {
             if (_criminal.IsDefeated) return;
             runAwayMarkAnimator.SetBool("Active", true);
         }
-        private void DisableRunAwayMark()
-        {
-            runAwayMarkAnimator.SetBool("Active", false);
-        }
+        private void DisableRunAwayMark() => runAwayMarkAnimator.SetBool("Active", false);
     }
 }

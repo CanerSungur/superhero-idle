@@ -580,7 +580,7 @@ GameObject:
   - component: {fileID: 2353164}
   - component: {fileID: 1405259508}
   - component: {fileID: 8450739412164117806}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SM_Veh_Car_Police_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -596,7 +596,7 @@ Transform:
   m_GameObject: {fileID: 189930}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 0.125, y: 0.125, z: 0.125}
   m_Children:
   - {fileID: 418284}
   - {fileID: 462268}
@@ -706,7 +706,7 @@ NavMeshAgent:
   m_Radius: 2.2
   m_Speed: 3.5
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 1
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
