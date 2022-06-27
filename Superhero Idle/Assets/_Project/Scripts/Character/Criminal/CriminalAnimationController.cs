@@ -53,6 +53,8 @@ namespace SuperheroIdle
             _criminal.OnRunAway -= RunAway;
 
             _criminal.OnGetThrown -= GetThrown;
+
+            transform.DOKill();
         }
 
         public void Idle() => _animator.SetBool(_walkID, false);
@@ -65,7 +67,6 @@ namespace SuperheroIdle
             _animator.SetTrigger(_getThrownID);
 
             transform.DOMove(transform.position - (transform.forward * 0.7f), 1f).OnComplete(() => {
-                //transform.DOMove(transform.position + (transform.forward * 3), 1f);
                 transform.DOJump(transform.position + (transform.forward * 2.75f), 0.75f, 1, 1f);
             });
         }
@@ -73,9 +74,9 @@ namespace SuperheroIdle
         {
             if (attackType == Enums.CriminalAttackType.Civillian)
             {
-                if (_criminal.TargetCivillian.Type == Enums.CivillianType.WithBag)
+                if (_criminal.AttackDecider.TargetCivillian.Type == Enums.CivillianType.WithBag)
                     _animator.SetInteger(_attackIndexID, _withBagAttack);
-                else if (_criminal.TargetCivillian.Type == Enums.CivillianType.WithoutBag)
+                else if (_criminal.AttackDecider.TargetCivillian.Type == Enums.CivillianType.WithoutBag)
                     _animator.SetInteger(_attackIndexID, _withoutBagAttack);
             }
             else if (attackType == Enums.CriminalAttackType.ATM)
@@ -90,7 +91,7 @@ namespace SuperheroIdle
         #region ANIMATION EVENT FUNCTIONS
         public void HitAtm()
         {
-            _criminal.TargetAtm.OnGetHit?.Invoke();
+            _criminal.AttackDecider.TargetAtm.OnGetHit?.Invoke();
         }
         #endregion
     }

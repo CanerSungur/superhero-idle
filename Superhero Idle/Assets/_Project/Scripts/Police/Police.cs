@@ -4,17 +4,15 @@ using ZestCore.Ai;
 using ZestCore.Utility;
 using ZestGames;
 using DG.Tweening;
-using UnityEngine.AI;
 
 namespace SuperheroIdle
 {
     public class Police : MonoBehaviour
     {
-        private NavMeshAgent _agent;
         private PoliceAnimationController _animationController;
         
-        private Enums.PoliceManCarrySide _currentCarrySide;
-        public Enums.PoliceManCarrySide CurrentCarrySide => _currentCarrySide;
+        private Enums.CarrySide _currentCarrySide;
+        public Enums.CarrySide CurrentCarrySide => _currentCarrySide;
 
         private Transform _targetCriminalTransform;
         private PoliceCar _spawnedCar = null;
@@ -25,10 +23,7 @@ namespace SuperheroIdle
         private void Init()
         {
             if (!_animationController)
-            {
                 _animationController = GetComponent<PoliceAnimationController>();
-                _agent = GetComponent<NavMeshAgent>();
-            }
         
             _animationController.Init(this);
             OnDropCriminal += DropCriminal;
@@ -46,7 +41,7 @@ namespace SuperheroIdle
             OnDropCriminal -= DropCriminal;
         }
 
-        public void SetTargetCriminal(PoliceCar policeCar, Transform targetCriminalTransform, Enums.PoliceManCarrySide carrySide)
+        public void SetTargetCriminal(PoliceCar policeCar, Transform targetCriminalTransform, Enums.CarrySide carrySide)
         {
             _currentCarrySide = carrySide;
             _targetCriminalTransform = targetCriminalTransform;
@@ -81,15 +76,16 @@ namespace SuperheroIdle
             _tookTheCriminal = true;
             OnTakeCriminal?.Invoke();
 
-            transform.parent = _targetCriminalTransform;
+            transform.SetParent(_targetCriminalTransform);
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            _targetCriminalTransform.GetComponentInParent<Criminal>().OnGetTakenToPoliceCar?.Invoke(_spawnedCar);
+            if (!GetComponentInParent<Criminal>().GettingTakenToPoliceCar)
+                GetComponentInParent<Criminal>().OnGetTakenToPoliceCar?.Invoke(_spawnedCar);
         }
         private void DropCriminal()
         {
-            transform.parent = null;
+            transform.SetParent(null);
 
             Delayer.DoActionAfterDelay(this, 4f, () =>
             {
@@ -100,9 +96,6 @@ namespace SuperheroIdle
         private void Bounce()
         {
             transform.DORewind();
-
-            //transform.DOShakePosition(.25f, .25f);
-            //transform.DOShakeRotation(.25f, .5f);
             transform.DOShakeScale(.5f, 1f);
         }
     }

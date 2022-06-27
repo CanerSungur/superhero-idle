@@ -40,9 +40,9 @@ namespace SuperheroIdle
         }
         private void SetSideIndex()
         {
-            if (_police.CurrentCarrySide == Enums.PoliceManCarrySide.Left)
+            if (_police.CurrentCarrySide == Enums.CarrySide.Left)
                 _animator.SetInteger(_sideIndexID, _leftSideIndex);
-            else if (_police.CurrentCarrySide == Enums.PoliceManCarrySide.Right)
+            else if (_police.CurrentCarrySide == Enums.CarrySide.Right)
                 _animator.SetInteger(_sideIndexID, _rightSideIndex);
         }
         private void Drop()

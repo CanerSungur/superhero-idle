@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using ZestCore.Ai;
 using ZestCore.Utility;
 using ZestGames;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
@@ -13,40 +14,47 @@ namespace SuperheroIdle
         private NavMeshAgent _agent;
         private Vector3 _currentTargetPosition;
         private bool _targetReached = false;
-        private readonly float _randomWalkPosRadius = 10f;
 
         [Header("-- SETUP --")]
         [SerializeField] private float speed = 1f;
+        private readonly float _takenToAmbulanceSpeed = 2.5f;
+        private float _currentSpeed;
 
         public bool IsMoving => _agent.velocity.magnitude >= 0.1f;
-        private bool _searchPath, _hasPath = false;
+        private bool _isBeingTakenToAmbulance, _hasReachedToAmbulance, _searchPath, _hasPath = false;
 
         public void Init(CharacterBase characterBase)
         {
+            _currentSpeed = speed;
+
             _civillian = GetComponent<Civillian>();
             _agent = GetComponent<NavMeshAgent>();
-            _agent.speed = speed;
-            _searchPath = _hasPath = false;
+            _agent.speed = _currentSpeed;
+            _isBeingTakenToAmbulance = _hasReachedToAmbulance = _searchPath = _hasPath = false;
 
             StartSearchingPath();
-            //_currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
-            //Motor();
 
-            //_civillian.OnGetAttacked += Stop;
             _civillian.OnDefeated += Defeated;
             _civillian.OnRescued += Rescued;
+            _civillian.OnGetTakenToAmbulance += GetTakenToAmbulance;
         }
 
         private void OnDisable()
         {
             if (!_civillian) return;
-            //_civillian.OnGetAttacked -= Stop;
             _civillian.OnDefeated -= Defeated;
             _civillian.OnRescued -= Rescued;
+            _civillian.OnGetTakenToAmbulance -= GetTakenToAmbulance;
         }
 
         private void Update()
         {
+            if (_civillian.IsDefeated && _isBeingTakenToAmbulance)
+            {
+                if (Operation.IsTargetReached(transform, _currentTargetPosition, 1f))
+                    GetThrownToAmbulance();
+            }
+
             if (_civillian.IsDefeated || GameManager.GameState == Enums.GameState.GameEnded) return;
 
             if (_civillian.IsBeingAttacked)
@@ -55,7 +63,7 @@ namespace SuperheroIdle
             #region SEARCH PATH IF WANTED
             if (_searchPath)
             {
-                if (RandomNavmeshLocation(_randomWalkPosRadius) && !_hasPath)
+                if (RandomNavmeshLocation() && !_hasPath)
                 {
                     Motor();
                     _searchPath = false;
@@ -71,20 +79,8 @@ namespace SuperheroIdle
                 _hasPath = false;
                 _civillian.OnIdle?.Invoke();
                 StartSearchingPath();
-
-                //Delayer.DoActionAfterDelay(this, 3f, () => {
-                //    _currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
-                //    Motor();
-                //});
             }
             #endregion
-
-            //#region START MOTOR AFTER NEW PATH
-            //if (_hasPath && _targetReached)
-            //    Motor();
-            //#endregion
-
-            //transform.rotation = Quaternion.LookRotation(_agent.velocity, Vector3.up);
         }
 
         private void StartSearchingPath() => _searchPath = true;
@@ -95,10 +91,10 @@ namespace SuperheroIdle
             _civillian.OnWalk?.Invoke();
         }
 
-        private bool RandomNavmeshLocation(float radius)
+        private bool RandomNavmeshLocation()
         {
             Vector3 randomPosition = RNG.RandomPointInBounds(_civillian.BelongedPhase.Collider.bounds);
-            
+
             NavMeshPath _path = new NavMeshPath();
             _agent.CalculatePath(randomPosition, _path);
 
@@ -109,36 +105,43 @@ namespace SuperheroIdle
                 _currentTargetPosition = randomPosition;
                 return true;
             }
-
-
-            //Vector3 randomDirection = Random.insideUnitSphere * radius;
-            //randomDirection += transform.position;
-            //NavMeshHit hit;
-
-            //if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
-            //{
-            //    NavMeshPath _path = new NavMeshPath();
-            //    _agent.CalculatePath(_currentTargetPosition, _path);
-
-            //    if (_path.status == NavMeshPathStatus.PathInvalid)
-            //    {
-            //        //Debug.Log("Coudn't find a way");
-            //        return false;
-            //    }
-            //    else
-            //    {
-            //        _currentTargetPosition = hit.position;
-            //        //Debug.Log("Found a way");
-            //        return true;
-            //    }
-            //}
-            //else
-            //{
-            //    //Debug.Log("Coudn't find a way");
-            //    return false;
-            //}
         }
 
+        private void GetTakenToAmbulance(Ambulance ambulance)
+        {
+            _currentTargetPosition = ambulance.DropTransform.position;
+            _isBeingTakenToAmbulance = true;
+
+            _agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
+            _targetReached = false;
+            _agent.isStopped = false;
+            _targetReached = false;
+            _agent.SetDestination(_currentTargetPosition);
+        }
+        private void GetThrownToAmbulance()
+        {
+            if (!_hasReachedToAmbulance)
+            {
+                _civillian.ActivatedAmbulance.OnOpenDoor?.Invoke();
+
+                Stop();
+
+                _hasReachedToAmbulance = true;
+                transform.DOLookAt(_civillian.ActivatedAmbulance.transform.position, 2f, AxisConstraint.Y, Vector3.up).OnComplete(() =>
+                {
+                    for (int i = 0; i < _civillian.ActivatedAmbulance.Medics.Count; i++)
+                        _civillian.ActivatedAmbulance.Medics[i].OnDropCivillian?.Invoke();
+
+                    _isBeingTakenToAmbulance = false;
+                    _civillian.OnGetThrown?.Invoke();
+
+                    Delayer.DoActionAfterDelay(this, 2f, () =>{
+                        _civillian.ActivatedAmbulance.OnCloseDoor?.Invoke();
+                        gameObject.SetActive(false);
+                    });
+                });
+            }
+        }
         public void Stop()
         {
             _targetReached = true;
@@ -147,18 +150,20 @@ namespace SuperheroIdle
         }
         private void Rescued()
         {
-            Delayer.DoActionAfterDelay(this, _civillian.ClapTime, () => {
+            if (_civillian.IsDefeated) return;
+
+            Delayer.DoActionAfterDelay(this, _civillian.ClapTime, () =>
+            {
                 _targetReached = false;
                 _agent.isStopped = false;
 
                 StartSearchingPath();
-                //_currentTargetPosition = RandomNavmeshLocation(_randomWalkPosRadius);
-                //Motor();
             });
         }
         private void Defeated()
         {
-            Debug.Log("Civillian Defeated!");
+            _currentSpeed = _takenToAmbulanceSpeed;
+            _agent.speed = _currentSpeed;
         }
     }
 }

@@ -57,10 +57,10 @@ namespace SuperheroIdle
             _criminal.OnDefeated?.Invoke();
             PeopleEvents.OnCriminalDecreased?.Invoke();
 
-            if (_criminal.AttackType == Enums.CriminalAttackType.Civillian)
-                _criminal.TargetCivillian.OnRescued?.Invoke();
-            else if (_criminal.AttackType == Enums.CriminalAttackType.ATM)
-                _criminal.TargetAtm.OnRescued?.Invoke();
+            if (_criminal.AttackDecider.AttackType == Enums.CriminalAttackType.Civillian)
+                _criminal.AttackDecider.TargetCivillian.OnRescued?.Invoke();
+            else if (_criminal.AttackDecider.AttackType == Enums.CriminalAttackType.ATM)
+                _criminal.AttackDecider.TargetAtm.OnRescued?.Invoke();
 
             PlayerEvents.OnStopFighting?.Invoke(_criminal);
 

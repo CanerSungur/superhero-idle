@@ -2,6 +2,7 @@ using UnityEngine;
 using ZestGames;
 using ZestCore.Utility;
 using System.Collections.Generic;
+using System;
 
 namespace SuperheroIdle
 {
@@ -20,6 +21,8 @@ namespace SuperheroIdle
 
         [Header("-- CRIME SETUP --")]
         [SerializeField] private int maxCrimeCount = 5;
+        private int _currentCrimeCount = 0;
+        public bool CanCrimeHappen => _currentCrimeCount < maxCrimeCount;
 
         #region CIVILLIAN LIST SYSTEM
         private List<Civillian> _activeCivillians;
@@ -61,6 +64,9 @@ namespace SuperheroIdle
 
             PeopleEvents.OnCivillianDecreased += SpawnCivillian;
             PeopleEvents.OnCriminalDecreased += SpawnCriminal;
+
+            CrimeEvents.OnCrimeStarted += CrimeStarted;
+            CrimeEvents.OnCrimeEnded += CrimeEnded;
         }
 
         private void Start()
@@ -72,8 +78,21 @@ namespace SuperheroIdle
         {
             PeopleEvents.OnCivillianDecreased -= SpawnCivillian;
             PeopleEvents.OnCriminalDecreased -= SpawnCriminal;
+
+            CrimeEvents.OnCrimeStarted -= CrimeStarted;
+            CrimeEvents.OnCrimeEnded -= CrimeEnded;
         }
 
+        private void CrimeStarted(Phase phase)
+        {
+            if (phase != this) return;
+            _currentCrimeCount++;
+        }
+        private void CrimeEnded(Phase phase)
+        {
+            if (phase != this) return;
+            _currentCrimeCount--;
+        }
         private void SpawnCivillian()
         {
             Civillian civillian = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.Civillian, RNG.RandomPointInBounds(Collider.bounds), Quaternion.identity).GetComponent<Civillian>();

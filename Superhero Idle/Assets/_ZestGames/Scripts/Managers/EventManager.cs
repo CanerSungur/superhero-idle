@@ -1,6 +1,5 @@
 using SuperheroIdle;
 using System;
-using UnityEngine;
 
 namespace ZestGames
 {
@@ -38,5 +37,10 @@ namespace ZestGames
     public static class PeopleEvents
     {
         public static Action OnCriminalDecreased, OnCivillianDecreased;
+    }
+
+    public static class CrimeEvents
+    {
+        public static Action<Phase> OnCrimeStarted, OnCrimeEnded;
     }
 }

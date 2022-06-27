@@ -45,7 +45,7 @@ namespace SuperheroIdle
             DisableMesh();
             _policeMen.Clear();
 
-            PoliceManager.AddFreePoliceCar(this);
+            
         }
 
         private void OnEnable()
@@ -62,6 +62,8 @@ namespace SuperheroIdle
         {
             _activatorCriminal = null;
             OnStartedLeaving -= Leave;
+
+            transform.DOKill();
         }
 
         private void Update()
@@ -77,48 +79,14 @@ namespace SuperheroIdle
                 SpawnPoliceMan();
             }
 
-            if (Operation.IsTargetReached(transform, _exitPosition, 5f) && gameObject.activeSelf)
+            if (Operation.IsTargetReached(transform, _exitPosition, 5f))
             {
                 _agent.SetDestination(transform.position);
                 _agent.isStopped = true;
                 _agent.velocity = Vector3.zero;
+                transform.position = startTransform.position;
                 DisableMesh();
             }
-
-            //if (_startMoving)
-            //{
-            //    if (_targetReached)
-            //    {
-            //        transform.Translate(transform.forward * speed * Time.deltaTime, Space.World);
-            //        Delayer.DoActionAfterDelay(this, 5f, Init);
-            //    }
-            //    else
-            //    {
-            //        //if (_turnReached)
-            //        //{
-            //        //Navigation.MoveTransform(transform, _targetPosition, speed);
-            //        transform.Translate(transform.forward * speed * Time.deltaTime, Space.World);
-            //        Navigation.LookAtTarget(transform, _targetPosition, 7f);
-            //        if (Operation.IsTargetReached(transform, _targetPosition, 25f) && !_targetReached)
-            //        {
-            //            _targetReached = true;
-            //            OnStartedIdling?.Invoke();
-            //            _startMoving = false;
-            //            //Delayer.DoActionAfterDelay(this, _idlingTime, () => _startMoving = true);
-            //            //Delayer.DoActionAfterDelay(this, _idlingTime, () => OnStartedMoving?.Invoke());
-
-            //            SpawnPoliceMan();
-            //        }
-            //        //}
-            //        //else
-            //        //{
-            //        //Navigation.MoveTransform(transform, _turnPosition, speed);
-            //        //Navigation.LookAtTarget(transform, _turnPosition, 7f);
-            //        //if (Operation.IsTargetReached(transform, _turnPosition) && !_turnReached)
-            //        //    _turnReached = true;
-            //        //}
-            //    }
-            //}
         }
 
         public void StartTheCar(Criminal criminal)
@@ -144,9 +112,9 @@ namespace SuperheroIdle
             {
                 Police police = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.PoliceMan, spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)].position, Quaternion.identity).GetComponent<Police>();
                 if (i == 0)
-                    police.SetTargetCriminal(this, _activatorCriminal.LeftCarryPoint, Enums.PoliceManCarrySide.Left);
+                    police.SetTargetCriminal(this, _activatorCriminal.LeftCarryPoint, Enums.CarrySide.Left);
                 else if (i == 1)
-                    police.SetTargetCriminal(this, _activatorCriminal.RightCarrypoint, Enums.PoliceManCarrySide.Right);
+                    police.SetTargetCriminal(this, _activatorCriminal.RightCarryPoint, Enums.CarrySide.Right);
 
                 _policeMen.Add(police);
             }
@@ -177,6 +145,8 @@ namespace SuperheroIdle
         private void DisableMesh()
         {
             _targetReached = false;
+            _activatorCriminal = null;
+            PoliceManager.AddFreePoliceCar(this);
 
             for (int i = 0; i < _meshes.Length; i++)
                 _meshes[i].enabled = false;

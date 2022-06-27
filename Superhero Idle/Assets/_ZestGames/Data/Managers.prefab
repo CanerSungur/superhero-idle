@@ -15,8 +15,9 @@ GameObject:
   - component: {fileID: 5491084403859615912}
   - component: {fileID: 5491084403859615927}
   - component: {fileID: 1124688366865923144}
-  - component: {fileID: 1954144505244371885}
   - component: {fileID: 7125497453284493463}
+  - component: {fileID: 1954144505244371885}
+  - component: {fileID: 2860401452531652400}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -121,18 +122,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameStartCM: {fileID: 0}
   gameplayCM: {fileID: 0}
---- !u!114 &1954144505244371885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5491084403859615924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e646272105caf164dbcb6aa73d0c6c50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7125497453284493463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,4 +134,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f35c3b8cd8e87ef49b607cb16b9cd110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxCrimeDuration: 999
+  maxCrimeDuration: 20
+--- !u!114 &1954144505244371885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491084403859615924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e646272105caf164dbcb6aa73d0c6c50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2860401452531652400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491084403859615924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32113be05e47c9f4c8390f8aa2bf5a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
