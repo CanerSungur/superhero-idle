@@ -12,7 +12,7 @@ namespace ZestGames
         [SerializeField] private Joystick joystick;
 
         public Vector3 InputValue { get; private set; }
-        public bool CanTakeInput => GameManager.GameState == Enums.GameState.Started && Time.time >= _delayedTime;
+        public bool CanTakeInput => GameManager.GameState == Enums.GameState.Started && Time.time >= _delayedTime && !UpgradeCanvas.IsOpen;
         private float _delayedTime;
         private readonly float _delayRate = 2f;
 

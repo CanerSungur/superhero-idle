@@ -24,7 +24,7 @@ namespace SuperheroIdle
         private PhoneBooth _activatedPhoneBooth = null;
 
         public bool IsMoving => _player.InputHandler.InputValue != Vector3.zero;
-        public bool IsGrounded => Physics.Raycast(_player.Collider.bounds.center, Vector3.down, _player.Collider.bounds.extents.y + 0.05f, walkableLayerMask);
+        public bool IsGrounded => Physics.Raycast(_player.Collider.bounds.center, Vector3.down, _player.Collider.bounds.extents.y + 0.01f, walkableLayerMask);
 
         public void Init(Player player)
         {
@@ -34,11 +34,17 @@ namespace SuperheroIdle
             _currentSpeed = civillianSpeed;
 
             PlayerEvents.OnGoToPhoneBooth += GoToPhoneBooth;
+            PlayerEvents.OnChangeToCivillian += SetCivillianSpeed;
+            PlayerEvents.OnChangeToHero += SetHeroSpeed;
+            UpgradeEvents.OnOpenUpgradeCanvas += RotateForUpgradeCamera;
         }
 
         private void OnDisable()
         {
             PlayerEvents.OnGoToPhoneBooth -= GoToPhoneBooth;
+            PlayerEvents.OnChangeToCivillian -= SetCivillianSpeed;
+            PlayerEvents.OnChangeToHero -= SetHeroSpeed;
+            UpgradeEvents.OnOpenUpgradeCanvas -= RotateForUpgradeCamera;
         }
 
         private void Update()
@@ -102,5 +108,11 @@ namespace SuperheroIdle
             PlayerEvents.OnExitPhoneBooth?.Invoke();
             PlayerEvents.OnChangeToHero?.Invoke();
         }
+        private void RotateForUpgradeCamera()
+        {
+            transform.rotation = Quaternion.identity;
+        }
+        private void SetCivillianSpeed() => _currentSpeed = civillianSpeed;
+        private void SetHeroSpeed() => _currentSpeed = heroSpeed;
     }
 }

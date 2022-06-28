@@ -15,7 +15,7 @@ TagManager:
   - PhoneBooth
   - Criminal
   - Civillian
-  - PoliceCar
+  - Vehicle
   - Wall
   - Building
   - CriminalDither

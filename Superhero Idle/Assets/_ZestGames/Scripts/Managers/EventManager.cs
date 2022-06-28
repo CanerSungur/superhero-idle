@@ -49,5 +49,11 @@ namespace ZestGames
     public static class UpgradeEvents
     {
         public static Action OnUpgradeMovementSpeed, OnUpgradeChangeSpeed, OnUpgradeFightSpeed, OnUpgradeIncome, OnUpgradeCostDecrease;
+        public static Action OnOpenUpgradeCanvas, OnCloseUpgradeCanvas;
+    }
+    
+    public static class PhaseEvents
+    {
+        public static Action<PhaseUnlocker, int> OnConsumeMoney;
     }
 }

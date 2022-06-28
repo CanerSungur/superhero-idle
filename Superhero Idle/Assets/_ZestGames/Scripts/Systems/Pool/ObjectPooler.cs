@@ -80,7 +80,9 @@ namespace ZestGames
             }
         }
 
-        public GameObject SpawnFromPool(Enums.PoolStamp poolStamp, Vector3 position, Quaternion rotation, Transform ?parent = null)
+#pragma warning disable CS8632 
+        public GameObject SpawnFromPool(Enums.PoolStamp poolStamp, Vector3 position, Quaternion rotation, Transform? parent = null)
+#pragma warning restore CS8632 
         {
             if (!PoolDictionary.ContainsKey(poolStamp))
             {

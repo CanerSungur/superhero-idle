@@ -12,6 +12,7 @@ namespace SuperheroIdle
         private Camera _camera;
         private Vector2 _currentPosition;
         private PhaseUnlocker _phaseUnlocker = null;
+        private PhoneBooth _phoneBooth = null;
         private float _disableTime;
 
         //private Vector3 _defaultScale = Vector3.one;
@@ -44,6 +45,22 @@ namespace SuperheroIdle
             //});
         }
 
+        public void Init(MoneyCanvas moneyCanvas, PhoneBooth phoneBooth)
+        {
+            if (!_moneyCanvas)
+            {
+                _moneyCanvas = moneyCanvas;
+                _canvasRect = _moneyCanvas.GetComponent<RectTransform>();
+                _rectTransform = GetComponent<RectTransform>();
+                _camera = Camera.main;
+            }
+
+            _phoneBooth = phoneBooth;
+            _disableTime = Time.time + 0.9f;
+            _currentPosition = Hud.MoneyAnchoredPosition;
+            _rectTransform.anchoredPosition = _currentPosition;
+        }
+
         private void OnDisable()
         {
             _phaseUnlocker = null;
@@ -51,18 +68,30 @@ namespace SuperheroIdle
 
         private void Update()
         {
-            if (!_phaseUnlocker) return;
+            if (_phaseUnlocker)
+            {
+                Vector2 travel = GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform) - _rectTransform.anchoredPosition;
+                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
 
-            //_rectTransform.anchoredPosition = Vector2.Lerp(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phaseUnlocker), 5f * Time.deltaTime);
-            Vector2 travel = GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform) - _rectTransform.anchoredPosition;
-            _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
+
+                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform)) < 25f)
+                    gameObject.SetActive(false);
+
+                if (Time.time >= _disableTime)
+                    gameObject.SetActive(false);
+            }
+            else if (_phoneBooth)
+            {
+                Vector2 travel = GetWorldPointToScreenPoint(_phoneBooth.MoneyImageTransform) - _rectTransform.anchoredPosition;
+                _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
 
 
-            if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform)) < 25f)
-                gameObject.SetActive(false);
+                if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phoneBooth.MoneyImageTransform)) < 25f)
+                    gameObject.SetActive(false);
 
-            if (Time.time >= _disableTime)
-                gameObject.SetActive(false);
+                if (Time.time >= _disableTime)
+                    gameObject.SetActive(false);
+            }
         }
 
         private Vector2 GetWorldPointToScreenPoint(Transform transform)

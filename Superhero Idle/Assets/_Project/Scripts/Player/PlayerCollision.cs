@@ -14,9 +14,17 @@ namespace SuperheroIdle
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out PhoneBooth phoneBooth) && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
+            if (other.TryGetComponent(out PhoneBooth phoneBooth))
             {
-                PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth);
+                if (phoneBooth.IsActivated && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
+                    PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth);
+
+                if (phoneBooth.CanBeActivated && !phoneBooth.PlayerIsInArea)
+                {
+                    phoneBooth.PlayerIsInArea = true;
+                    //phoneBooth.Activate();
+                    _player.StartSpendingMoney(phoneBooth);
+                }
             }
 
             if (other.TryGetComponent(out PhaseUnlocker phaseUnlocker) && !phaseUnlocker.PlayerIsInArea)
@@ -28,15 +36,21 @@ namespace SuperheroIdle
             if (other.TryGetComponent(out UpgradeArea upgradeArea) && !upgradeArea.PlayerIsInArea)
             {
                 upgradeArea.StartOpening();
-                Debug.Log("Opening");
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent(out PhoneBooth phoneBooth) && phoneBooth.DoorIsOpen)
+            if (other.TryGetComponent(out PhoneBooth phoneBooth))
             {
-                phoneBooth.HeroExitSuccessfully();
+                if (phoneBooth.IsActivated && phoneBooth.DoorIsOpen)
+                    phoneBooth.HeroExitSuccessfully();
+
+                if (phoneBooth.CanBeActivated && phoneBooth.PlayerIsInArea)
+                {
+                    phoneBooth.PlayerIsInArea = false;
+                    _player.StopSpendingMoney(phoneBooth);
+                }
             }
 
             if (other.TryGetComponent(out PhaseUnlocker phaseUnlocker) && phaseUnlocker.PlayerIsInArea)
@@ -48,7 +62,6 @@ namespace SuperheroIdle
             if (other.TryGetComponent(out UpgradeArea upgradeArea) && upgradeArea.PlayerIsInArea)
             {
                 upgradeArea.StopOpening();
-                Debug.Log("Closing");
             }
         }
     }

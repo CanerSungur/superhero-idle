@@ -81,7 +81,7 @@ namespace SuperheroIdle
 
             transform.DOMove(transform.position - (transform.forward * 0.7f), 1f).OnComplete(() => {
                 //transform.DOMove(transform.position + (transform.forward * 3), 1f);
-                transform.DOJump(transform.position + (transform.forward * 2.75f), 0.75f, 1, 1f);
+                transform.DOJump(transform.position + (transform.forward * 3.75f), 0.75f, 1, 1f);
             });
         }
         private void Rescued()

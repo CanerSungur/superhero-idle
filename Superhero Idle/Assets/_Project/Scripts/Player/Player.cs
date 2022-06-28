@@ -70,15 +70,6 @@ namespace SuperheroIdle
             }
 
             GetClosestActiveCriminal();
-
-            //if (Input.GetKey(KeyCode.S))
-            //    MoneyCanvas.Instance.SpawnCollectMoney();
-            //if (Input.GetKeyDown(KeyCode.A))
-            //{
-            //    MoneyCanvas.Instance.StartSpendingMoney();
-            //}
-            //if (Input.GetKeyDown(KeyCode.D))
-            //    MoneyCanvas.Instance.StopSpendingMoney();
         }
 
         #region SPEND MONEY FUNCTIONS
@@ -94,7 +85,18 @@ namespace SuperheroIdle
             if (phaseUnlocker.MoneyCanBeSpent)
                 MoneyCanvas.Instance.StartSpendingMoney(phaseUnlocker);
         }
+        public void StartSpendingMoney(PhoneBooth phoneBooth)
+        {
+            _spendMoneyEnum = SpendMoney(phoneBooth);
+            _currentSpendMoneyDelay = _startingSpendMoneyDelay;
+            _currentMoneySpendValue = DataManager.MoneyValue;
+            _moneySpendingCount = 0;
+            StartCoroutine(_spendMoneyEnum);
 
+            // Start throwing money
+            if (phoneBooth.MoneyCanBeSpent)
+                MoneyCanvas.Instance.StartSpendingMoney(phoneBooth);
+        }
         public void StopSpendingMoney(PhaseUnlocker phaseUnlocker)
         {
             StopCoroutine(_spendMoneyEnum);
@@ -102,18 +104,34 @@ namespace SuperheroIdle
             // Stop throwing money
             MoneyCanvas.Instance.StopSpendingMoney();
         }
+        public void StopSpendingMoney(PhoneBooth phoneBooth)
+        {
+            StopCoroutine(_spendMoneyEnum);
 
+            // Stop throwing money
+            MoneyCanvas.Instance.StopSpendingMoney();
+        }
         private IEnumerator SpendMoney(PhaseUnlocker phaseUnlocker)
         {
             while (phaseUnlocker.MoneyCanBeSpent)
             {
-                Debug.Log("Consumed Money: " + _currentMoneySpendValue);
+                //Debug.Log("Consumed Money: " + _currentMoneySpendValue);
                 phaseUnlocker.ConsumeMoney(_currentMoneySpendValue);
                 yield return new WaitForSeconds(_currentSpendMoneyDelay);
                 //DecreaseMoneyDelay();
                 UpdateMoneyValue();
             }
-
+        }
+        private IEnumerator SpendMoney(PhoneBooth phoneBooth)
+        {
+            while (phoneBooth.MoneyCanBeSpent)
+            {
+                //Debug.Log("Consumed Money: " + _currentMoneySpendValue);
+                phoneBooth.ConsumeMoney(_currentMoneySpendValue);
+                yield return new WaitForSeconds(_currentSpendMoneyDelay);
+                //DecreaseMoneyDelay();
+                UpdateMoneyValue();
+            }
         }
         private void DecreaseMoneyDelay()
         {
@@ -127,7 +145,7 @@ namespace SuperheroIdle
             if (_moneySpendingCount != 0 && _moneySpendingCount % 5 == 0)
             {
                 _currentMoneySpendValue *= _moneyValueMultiplier;
-                Debug.Log(_currentMoneySpendValue);
+                //Debug.Log(_currentMoneySpendValue);
             }
         }
         #endregion

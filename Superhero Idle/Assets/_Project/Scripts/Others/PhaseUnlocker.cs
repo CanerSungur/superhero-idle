@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using ZestGames;
+using System;
 
 namespace SuperheroIdle
 {
@@ -9,6 +10,7 @@ namespace SuperheroIdle
         [Header("-- SETUP --")]
         [SerializeField] private int requestedMoney = 1000;
         [SerializeField] private Phase phaseToBeUnlocked;
+        public Phase PhaseToBeUnlocked => phaseToBeUnlocked;
 
         [Header("-- CANVAS SETUP --")]
         [SerializeField] private TextMeshProUGUI remainingMoneyText;
@@ -24,6 +26,8 @@ namespace SuperheroIdle
             PlayerIsInArea = false;
             LoadConsumedMoney();
             remainingMoneyText.text = (requestedMoney - _consumedMoney).ToString();
+
+            PhaseEvents.OnConsumeMoney += UpdateConsumedMoney;
         }
 
         private void OnEnable()
@@ -44,6 +48,8 @@ namespace SuperheroIdle
         private void OnDisable()
         {
             SaveConsumedMoney();
+            
+            PhaseEvents.OnConsumeMoney -= UpdateConsumedMoney;
         }
 
         #region LOAD-SAVE
@@ -69,6 +75,13 @@ namespace SuperheroIdle
             gameObject.SetActive(false);
         }
         private void UpdateRemainingMoneyText() => remainingMoneyText.text = (requestedMoney - _consumedMoney).ToString();
+        private void UpdateConsumedMoney(PhaseUnlocker phaseUnlocker, int amount)
+        {
+            if (phaseUnlocker != this && phaseUnlocker.PhaseToBeUnlocked == this.phaseToBeUnlocked)
+                _consumedMoney += amount;
+
+            UpdateRemainingMoneyText();
+        }
 
         #region PUBLICS
         public void ConsumeMoney(int amount)
@@ -76,6 +89,7 @@ namespace SuperheroIdle
             if (amount > (requestedMoney - _consumedMoney))
             {
                 CollectableEvents.OnConsume?.Invoke(requestedMoney - _consumedMoney);
+                PhaseEvents.OnConsumeMoney?.Invoke(this, requestedMoney - _consumedMoney);
                 _consumedMoney = requestedMoney;
             }
             else
@@ -84,10 +98,12 @@ namespace SuperheroIdle
                 {
                     _consumedMoney += DataManager.TotalMoney;
                     CollectableEvents.OnConsume?.Invoke(DataManager.TotalMoney);
+                    PhaseEvents.OnConsumeMoney?.Invoke(this, DataManager.TotalMoney);
                 }
                 else
                 {
                     CollectableEvents.OnConsume?.Invoke(amount);
+                    PhaseEvents.OnConsumeMoney?.Invoke(this, amount);
                     _consumedMoney += amount;
                 }
             }

@@ -9,15 +9,12 @@ namespace SuperheroIdle
     public class UpgradeCanvas : MonoBehaviour
     {
         private CustomButton _closeButton;
+        public static bool IsOpen { get; private set; }
 
         #region ANIMATION
         private Animator _animator;
         private readonly int _openID = Animator.StringToHash("Open");
         private readonly int _closeID = Animator.StringToHash("Close");
-        #endregion
-
-        #region EVENTS
-        public Action OnEnableCanvas, OnDisableCanvas;
         #endregion
 
         [Header("-- MOVEMENT SPEED SETUP --")]
@@ -55,6 +52,7 @@ namespace SuperheroIdle
 
             Delayer.DoActionAfterDelay(this, 0.5f, UpdateTexts);
 
+            IsOpen = false;
             _closeButton.onClick.AddListener(CloseCanvasClicked);
 
             movementSpeedUpgradeButton.onClick.AddListener(MovementSpeedUpgradeClicked);
@@ -69,12 +67,14 @@ namespace SuperheroIdle
             UiEvents.OnUpdateIncomeIncreaseText += UpdateTexts;
             UiEvents.OnUpdateCostDecreaseText += UpdateTexts;
 
-            OnEnableCanvas += EnableCanvas;
-            OnDisableCanvas += DisableCanvas;
+            UpgradeEvents.OnOpenUpgradeCanvas += EnableCanvas;
+            UpgradeEvents.OnCloseUpgradeCanvas += DisableCanvas;
         }
 
         private void OnDisable()
         {
+            _closeButton.onClick.RemoveListener(CloseCanvasClicked);
+
             movementSpeedUpgradeButton.onClick.RemoveListener(MovementSpeedUpgradeClicked);
             changeSpeedUpgradeButton.onClick.RemoveListener(ChangeSpeedUpgradeClicked);
             fightSpeedUpgradeButton.onClick.RemoveListener(FightSpeedUpgradeClicked);
@@ -87,8 +87,8 @@ namespace SuperheroIdle
             UiEvents.OnUpdateIncomeIncreaseText -= UpdateTexts;
             UiEvents.OnUpdateCostDecreaseText -= UpdateTexts;
 
-            OnEnableCanvas -= EnableCanvas;
-            OnDisableCanvas -= DisableCanvas;
+            UpgradeEvents.OnOpenUpgradeCanvas -= EnableCanvas;
+            UpgradeEvents.OnCloseUpgradeCanvas -= DisableCanvas;
         }
 
         private void UpdateTexts()
@@ -120,6 +120,7 @@ namespace SuperheroIdle
         }
 
         #region UPGRADE FUNCTIONS
+        private void CloseCanvas() => UpgradeEvents.OnCloseUpgradeCanvas?.Invoke();
         private void UpgradeMovementSpeed() => UpgradeEvents.OnUpgradeMovementSpeed?.Invoke();
         private void UpgradeChangeSpeed() => UpgradeEvents.OnUpgradeChangeSpeed?.Invoke();
         private void UpgradeFightSpeed() => UpgradeEvents.OnUpgradeFightSpeed?.Invoke();
@@ -128,7 +129,7 @@ namespace SuperheroIdle
         #endregion
 
         #region CLICK TRIGGER FUNCTIONS
-        private void CloseCanvasClicked() => _closeButton.TriggerClick(DisableCanvas);
+        private void CloseCanvasClicked() => _closeButton.TriggerClick(CloseCanvas);
         private void MovementSpeedUpgradeClicked() => movementSpeedUpgradeButton.TriggerClick(UpgradeMovementSpeed);
         private void ChangeSpeedUpgradeClicked() => changeSpeedUpgradeButton.TriggerClick(UpgradeChangeSpeed);
         private void FightSpeedUpgradeClicked() => fightSpeedUpgradeButton.TriggerClick(UpgradeFightSpeed);
@@ -137,8 +138,16 @@ namespace SuperheroIdle
         #endregion
 
         #region ANIMATOR FUNCTIONS
-        private void EnableCanvas() => _animator.SetTrigger(_openID);
-        private void DisableCanvas() => _animator.SetTrigger(_closeID);
+        private void EnableCanvas()
+        {
+            _animator.SetTrigger(_openID);
+            IsOpen = true;
+        }
+        private void DisableCanvas()
+        {
+            _animator.SetTrigger(_closeID);
+            IsOpen = false;
+        }
         #endregion
     }
 }

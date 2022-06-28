@@ -9,6 +9,7 @@ namespace ZestGames
         [Header("-- CAMERA SETUP --")]
         [SerializeField] private CinemachineVirtualCamera gameStartCM;
         [SerializeField] private CinemachineVirtualCamera gameplayCM;
+        [SerializeField] private CinemachineVirtualCamera upgradeCM;
         private CinemachineTransposer _gameplayCMTransposer;
 
         [Header("-- SHAKE SETUP --")]
@@ -17,7 +18,7 @@ namespace ZestGames
         private float _shakeDuration = 1f;
         private float _shakeTimer;
 
-        public static event Action OnShakeCam;
+        public static Action OnShakeCam;
 
         private void Awake()
         {
@@ -28,18 +29,25 @@ namespace ZestGames
 
             gameStartCM.Priority = 2;
             gameplayCM.Priority = 1;
+            upgradeCM.Priority = 0;
         }
 
         private void Start()
         {
             GameEvents.OnGameStart += () => gameplayCM.Priority = 3;
             OnShakeCam += () => _shakeStarted = true;
+
+            UpgradeEvents.OnOpenUpgradeCanvas += EnableUpgradeCanvasCam;
+            UpgradeEvents.OnCloseUpgradeCanvas += DisableUpgradeCanvasCam;
         }
 
         private void OnDisable()
         {
             GameEvents.OnGameStart -= () => gameplayCM.Priority = 3;
             OnShakeCam -= () => _shakeStarted = true;
+ 
+            UpgradeEvents.OnOpenUpgradeCanvas -= EnableUpgradeCanvasCam;
+            UpgradeEvents.OnCloseUpgradeCanvas -= DisableUpgradeCanvasCam;
         }
 
         private void Update()
@@ -47,6 +55,14 @@ namespace ZestGames
             ShakeCamForAWhile();
         }
 
+        private void EnableUpgradeCanvasCam()
+        {
+            upgradeCM.Priority = 5;
+        }
+        private void DisableUpgradeCanvasCam()
+        {
+            upgradeCM.Priority = 0;
+        }
         private void ShakeCamForAWhile()
         {
             if (_shakeStarted)

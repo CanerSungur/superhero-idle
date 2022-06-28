@@ -57,6 +57,7 @@ namespace SuperheroIdle
             capeObj.SetActive(false);
 
             Bounce();
+            CameraManager.OnShakeCam?.Invoke();
         }
 
         private void ChangeToHero()
@@ -69,6 +70,7 @@ namespace SuperheroIdle
 
             _finishTimeForHero = Time.time + _heroTime;
             Bounce();
+            CameraManager.OnShakeCam?.Invoke();
         }
         private void Bounce()
         {

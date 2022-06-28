@@ -33,11 +33,21 @@ namespace SuperheroIdle
             SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
             money.Init(this, phaseUnlocker);
         }
-
+        public void SpawnSpendMoney(PhoneBooth phoneBooth)
+        {
+            SpendMoney money = ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.SpendMoney, Vector3.zero, Quaternion.identity, transform).GetComponent<SpendMoney>();
+            money.Init(this, phoneBooth);
+        }
         public void StartSpendingMoney(PhaseUnlocker phaseUnlocker)
         {
             SpendMoneyEnumIsPlaying = true;
             _spendMoneyEnum = SpendMoney(phaseUnlocker);
+            StartCoroutine(_spendMoneyEnum);
+        }
+        public void StartSpendingMoney(PhoneBooth phoneBooth)
+        {
+            SpendMoneyEnumIsPlaying = true;
+            _spendMoneyEnum = SpendMoney(phoneBooth);
             StartCoroutine(_spendMoneyEnum);
         }
         public void StopSpendingMoney()
@@ -54,6 +64,14 @@ namespace SuperheroIdle
             while (DataManager.TotalMoney > 0)
             {
                 SpawnSpendMoney(phaseUnlocker);
+                yield return _waitforSpendMoneyDelay;
+            }
+        }
+        private IEnumerator SpendMoney(PhoneBooth phoneBooth)
+        {
+            while (DataManager.TotalMoney > 0)
+            {
+                SpawnSpendMoney(phoneBooth);
                 yield return _waitforSpendMoneyDelay;
             }
         }
