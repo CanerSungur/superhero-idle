@@ -24,6 +24,12 @@ namespace SuperheroIdle
                 phaseUnlocker.PlayerIsInArea = true;
                 _player.StartSpendingMoney(phaseUnlocker);
             }
+
+            if (other.TryGetComponent(out UpgradeArea upgradeArea) && !upgradeArea.PlayerIsInArea)
+            {
+                upgradeArea.StartOpening();
+                Debug.Log("Opening");
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -37,6 +43,12 @@ namespace SuperheroIdle
             {
                 phaseUnlocker.PlayerIsInArea = false;
                 _player.StopSpendingMoney(phaseUnlocker);
+            }
+
+            if (other.TryGetComponent(out UpgradeArea upgradeArea) && upgradeArea.PlayerIsInArea)
+            {
+                upgradeArea.StopOpening();
+                Debug.Log("Closing");
             }
         }
     }

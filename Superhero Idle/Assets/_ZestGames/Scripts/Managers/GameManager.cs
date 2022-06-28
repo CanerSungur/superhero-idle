@@ -15,16 +15,20 @@ namespace ZestGames
         private LevelManager _levelManager;
         private SettingsManager _settingsManager;
         private DataManager _dataManager;
-        private PeopleSpawnManager _peopleSpawnManager;
         private CrimeManager _crimeManager;
 
         private void Init()
         {
+            Application.targetFrameRate = 240;
+            // TODO: Check for DOTween capacity requirement.
+            //DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity();
+
             objectPooler.Init(this);
 
             GameState = Enums.GameState.WaitingToStart;
             GameEnd = Enums.GameEnd.None;
-
+            
+            #region MANAGER INITIALIZATIONS
             _levelManager = GetComponent<LevelManager>();
             _levelManager.Init(this);
             _dataManager = GetComponent<DataManager>();
@@ -33,11 +37,9 @@ namespace ZestGames
             _settingsManager.Init(this);
             _uiManager = GetComponent<UiManager>();
             _uiManager.Init(this);
-            //_peopleSpawnManager = GetComponent<PeopleSpawnManager>();
-            //Delayer.DoActionAfterDelay(this, 1f, () => _peopleSpawnManager.Init(this));
-            //_peopleSpawnManager.Init(this);
             _crimeManager = GetComponent<CrimeManager>();
             _crimeManager.Init(this);
+            #endregion
 
             UiEvents.OnUpdateCollectableText?.Invoke(DataManager.TotalMoney);
             UiEvents.OnUpdateLevelText?.Invoke(LevelHandler.Level);

@@ -33,7 +33,7 @@ namespace ZestGames
         private void UpdateMoneyText(int money)
         {
             collectableText.text = money.ToString();
-            DOTweenUtils.ShakeTransform(CollectableHUDTransform, 0.25f);
+            //DOTweenUtils.ShakeTransform(CollectableHUDTransform, 0.25f);
         }
     }
 }

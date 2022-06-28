@@ -16,12 +16,14 @@ namespace ZestGames
         public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero, OnExitPhoneBooth, OnExitPhoneBoothSuccessfully;
         public static Action<Criminal> OnStartFighting, OnStopFighting;
         public static Action<PhoneBooth> OnGoToPhoneBooth, OnEnterPhoneBooth;
+        public static Action OnSetCurrentMovementSpeed, OnSetCurrentChangeSpeed, OnSetCurrentFightSpeed, OnSetCurrentIncomeIncrease, OnSetCurrentCostDecrease;
     }
 
     public static class UiEvents
     {
         public static Action<int> OnUpdateLevelText, OnUpdateCollectableText;
         public static Action<string, FeedBackUi.Colors> OnGiveFeedBack;
+        public static Action OnUpdateMovementSpeedText, OnUpdateChangeSpeedText, OnUpdateFightSpeedText, OnUpdateIncomeIncreaseText, OnUpdateCostDecreaseText;
     }
 
     public static class CollectableEvents
@@ -42,5 +44,10 @@ namespace ZestGames
     public static class CrimeEvents
     {
         public static Action<Phase> OnCrimeStarted, OnCrimeEnded;
+    }
+
+    public static class UpgradeEvents
+    {
+        public static Action OnUpgradeMovementSpeed, OnUpgradeChangeSpeed, OnUpgradeFightSpeed, OnUpgradeIncome, OnUpgradeCostDecrease;
     }
 }
