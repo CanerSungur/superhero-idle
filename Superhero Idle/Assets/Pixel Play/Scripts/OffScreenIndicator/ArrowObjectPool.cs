@@ -8,7 +8,7 @@ class ArrowObjectPool : MonoBehaviour
     [Tooltip("Assign the arrow prefab.")]
     public Indicator pooledObject;
     [Tooltip("Initial pooled amount.")]
-    public int pooledAmount = 1;
+    public int pooledAmount = 50;
     [Tooltip("Should the pooled amount increase.")]
     public bool willGrow = true;
 

@@ -33,7 +33,7 @@ namespace SuperheroIdle
 
         // Spend value will increase by 10 in every 5 spend counts to shorten spending time immensely.
         private int _currentMoneySpendValue, _moneySpendingCount;
-        private readonly int _moneyValueIncrementLimit = 20; 
+        //private readonly int _moneyValueIncrementLimit = 20; 
         private readonly int _moneyValueMultiplier = 5;
         #endregion
 
@@ -61,14 +61,6 @@ namespace SuperheroIdle
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                if (StateController.CurrentState == Enums.PlayerState.Civillian)
-                    PlayerEvents.OnChangeToHero?.Invoke();
-                else if (StateController.CurrentState == Enums.PlayerState.Hero)
-                    PlayerEvents.OnChangeToCivillian?.Invoke();
-            }
-
             GetClosestActiveCriminal();
         }
 

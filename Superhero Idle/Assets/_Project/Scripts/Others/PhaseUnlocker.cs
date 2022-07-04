@@ -7,8 +7,8 @@ namespace SuperheroIdle
     public class PhaseUnlocker : MonoBehaviour
     {
         [Header("-- SETUP --")]
+        [SerializeField] private int number;
         [SerializeField] private Phase phaseToBeUnlocked;
-        public Phase PhaseToBeUnlocked => phaseToBeUnlocked;
         private Phase _belongedPhase = null;
 
         [Header("-- CANVAS SETUP --")]
@@ -19,9 +19,13 @@ namespace SuperheroIdle
         private readonly int _coreRequiredMoney = 1000;
         private int _requiredMoney;
         private int _consumedMoney;
+
+        #region PROPERTIES
         public bool PlayerIsInArea { get; set; }
+        public Phase PhaseToBeUnlocked => phaseToBeUnlocked;
         public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < _requiredMoney;
         public Transform MoneyTransform => moneyTransform;
+        #endregion
 
         public void Init(Phase phase)
         {
@@ -32,7 +36,7 @@ namespace SuperheroIdle
             LoadConsumedMoney();
 
             PhaseEvents.OnConsumeMoney += UpdateConsumedMoney;
-            PhaseEvents.OnUnlockPhase += HandleUnlockPhase;
+            PhaseEvents.OnUnlockPhase += HandleUnlockForOtherPhases;
             PlayerEvents.OnSetCurrentCostDecrease += UpdateRequiredMoney;
         }
 
@@ -54,14 +58,14 @@ namespace SuperheroIdle
 
         private void OnDisable()
         {
+            SaveConsumedMoney();
+
             if (_belongedPhase)
                 _belongedPhase.RemovePhase(this);
             
             PhaseEvents.OnConsumeMoney -= UpdateConsumedMoney;
-            PhaseEvents.OnUnlockPhase -= HandleUnlockPhase;
+            PhaseEvents.OnUnlockPhase -= HandleUnlockForOtherPhases;
             PlayerEvents.OnSetCurrentCostDecrease -= UpdateRequiredMoney;
-
-            SaveConsumedMoney();
         }
 
         private void UnlockPhase()
@@ -69,10 +73,10 @@ namespace SuperheroIdle
             if (!phaseToBeUnlocked.gameObject.activeSelf)
                 phaseToBeUnlocked.gameObject.SetActive(true);
 
-            gameObject.SetActive(false);
             PhaseEvents.OnUnlockPhase?.Invoke(this, phaseToBeUnlocked);
+            gameObject.SetActive(false);
         }
-        private void HandleUnlockPhase(PhaseUnlocker phaseUnlocker, Phase phaseToBeUnlocked)
+        private void HandleUnlockForOtherPhases(PhaseUnlocker phaseUnlocker, Phase phaseToBeUnlocked)
         {
             if (phaseUnlocker != this && phaseToBeUnlocked == this.phaseToBeUnlocked)
                 gameObject.SetActive(false);
@@ -81,25 +85,22 @@ namespace SuperheroIdle
         #region LOAD-SAVE
         private void SaveConsumedMoney()
         {
-            PlayerPrefs.SetInt($"Phase-{phaseToBeUnlocked.Number}-ConsumedMoney", _consumedMoney);
+            PlayerPrefs.SetInt($"Phase-{number}-ConsumedMoney", _consumedMoney);
             PlayerPrefs.Save();
         }
         private void LoadConsumedMoney()
         {
-            _consumedMoney = PlayerPrefs.GetInt($"Phase-{phaseToBeUnlocked.Number}-ConsumedMoney");
+            _consumedMoney = PlayerPrefs.GetInt($"Phase-{number}-ConsumedMoney", 0);
             UpdateRemainingMoneyText();
 
             if (_consumedMoney == _requiredMoney)
                 UnlockPhase();
-
-            Debug.Log(gameObject.name + " " + _consumedMoney);
         }
         #endregion
 
         #region UPDATE FUNCTIONS
         private void UpdateRequiredMoney()
         {
-            //Debug.Log(gameObject.name + " " + (int)((_coreRequiredMoney * phaseToBeUnlocked.Number) * DataManager.CurrentCostDecrease));
             _requiredMoney = _coreRequiredMoney * phaseToBeUnlocked.Number;
             _requiredMoney -= (int)(_requiredMoney * DataManager.CurrentCostDecrease);
 

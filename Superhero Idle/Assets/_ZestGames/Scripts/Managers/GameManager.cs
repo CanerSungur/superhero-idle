@@ -64,6 +64,24 @@ namespace ZestGames
             DOTween.KillAll();
         }
 
+        #region FOR TESTING
+        private void Update()
+        {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.M))
+                CollectableEvents.OnCollect?.Invoke(1000);
+
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                if (FindObjectOfType<Player>().StateController.CurrentState == Enums.PlayerState.Civillian)
+                    PlayerEvents.OnChangeToHero?.Invoke();
+                else if (FindObjectOfType<Player>().StateController.CurrentState == Enums.PlayerState.Hero)
+                    PlayerEvents.OnChangeToCivillian?.Invoke();
+            }
+#endif
+        }
+        #endregion
+
         private void HandleGameStart()
         {
             GameState = Enums.GameState.Started;

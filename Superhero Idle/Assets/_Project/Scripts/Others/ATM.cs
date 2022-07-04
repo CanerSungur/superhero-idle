@@ -68,7 +68,7 @@ namespace SuperheroIdle
 
             //transform.DOShakePosition(.25f, .25f);
             //transform.DOShakeRotation(.25f, .5f);
-            transform.DOShakeScale(.5f, 1f);
+            transform.DOShakeScale(1f, .5f);
         }
     }
 }

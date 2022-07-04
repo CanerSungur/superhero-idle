@@ -27,6 +27,18 @@ namespace PixelPlay.OffScreenIndicator
             return isTargetVisible;
         }
 
+        public static bool IsTargetVisible(Camera cam, GameObject go)
+        {
+            var planes = GeometryUtility.CalculateFrustumPlanes(cam);
+            var point = go.transform.position;
+            foreach (var plane in planes)
+            {
+                if (plane.GetDistanceToPoint(point) < 0)
+                    return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Gets the screen position and angle for the arrow indicator. 
         /// </summary>

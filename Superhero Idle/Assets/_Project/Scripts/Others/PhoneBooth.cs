@@ -82,7 +82,7 @@ namespace SuperheroIdle
         private void Bounce()
         {
             transform.DORewind();
-            transform.DOShakeScale(1f, 1f);
+            transform.DOShakeScale(1f, .5f);
         }
         private void EnableTrigger() => _collider.isTrigger = true;
         private void DisableTrigger() => _collider.isTrigger = false;

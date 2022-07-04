@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 /// <summary>
 /// Assign this script to the indicator prefabs.
@@ -38,6 +39,11 @@ public class Indicator : MonoBehaviour
         distanceText = transform.GetComponentInChildren<Text>();
     }
 
+    private void OnEnable()
+    {
+        Bounce();
+    }
+
     /// <summary>
     /// Sets the image color for the indicator.
     /// </summary>
@@ -72,6 +78,12 @@ public class Indicator : MonoBehaviour
     public void Activate(bool value)
     {
         transform.gameObject.SetActive(value);
+    }
+
+    private void Bounce()
+    {
+        transform.DORewind();
+        transform.DOShakeScale(1f, 0.5f);
     }
 }
 

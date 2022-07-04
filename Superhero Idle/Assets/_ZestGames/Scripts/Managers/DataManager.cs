@@ -101,16 +101,6 @@ namespace ZestGames
             SaveData();
         }
 
-        #region FOR TESTING
-        private void Update()
-        {
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.M))
-                CollectableEvents.OnCollect?.Invoke(1000);
-#endif
-        }
-        #endregion
-
         #region UPGRADE FUNCTIONS
         private void MovementSpeedUpgrade()
         {
@@ -171,7 +161,7 @@ namespace ZestGames
             if (CurrentCostDecrease >= 0.6f)
                 CurrentCostDecrease = 0.6f;
             PlayerEvents.OnSetCurrentCostDecrease?.Invoke();
-            Debug.Log("Cost Decrease Rate: " + CurrentCostDecrease);
+            //Debug.Log("Cost Decrease Rate: " + CurrentCostDecrease);
         }
         #endregion
 
