@@ -59,6 +59,7 @@ namespace SuperheroIdle
                 AttackATM();
 
             CharacterManager.AddCriminalCommitingCrime(_criminal);
+            CrimeEvents.OnCrimeStarted?.Invoke(_criminal.BelongedPhase);
         }
         private void AttackCivillian()
         {

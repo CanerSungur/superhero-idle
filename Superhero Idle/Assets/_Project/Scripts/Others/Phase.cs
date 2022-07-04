@@ -2,7 +2,6 @@ using UnityEngine;
 using ZestGames;
 using ZestCore.Utility;
 using System.Collections.Generic;
-using System;
 
 namespace SuperheroIdle
 {
@@ -54,6 +53,21 @@ namespace SuperheroIdle
         }
         #endregion
 
+        #region PHASE UNLOCKER SECTION
+        private List<PhaseUnlocker> _phaseUnlockers;
+        public List<PhaseUnlocker> PhaseUnlockers => _phaseUnlockers == null ? _phaseUnlockers = new List<PhaseUnlocker>() : _phaseUnlockers;
+        public void AddPhase(PhaseUnlocker phaseUnlocker)
+        {
+            if (!PhaseUnlockers.Contains(phaseUnlocker))
+                PhaseUnlockers.Add(phaseUnlocker);
+        }
+        public void RemovePhase(PhaseUnlocker phaseUnlocker)
+        {
+            if (PhaseUnlockers.Contains(phaseUnlocker))
+                PhaseUnlockers.Remove(phaseUnlocker);
+        }
+        #endregion
+
         private void Init()
         {
             for (int i = 0; i < maxCivillianCount; i++)
@@ -61,6 +75,8 @@ namespace SuperheroIdle
 
             for (int i = 0; i < maxCriminalCount; i++)
                 SpawnCriminal();
+
+            InitializePhaseUnlockers();
 
             PeopleEvents.OnCivillianDecreased += SpawnCivillian;
             PeopleEvents.OnCriminalDecreased += SpawnCriminal;
@@ -83,6 +99,11 @@ namespace SuperheroIdle
             CrimeEvents.OnCrimeEnded -= CrimeEnded;
         }
 
+        private void InitializePhaseUnlockers()
+        {
+            for (int i = 0; i < PhaseUnlockers.Count; i++)
+                PhaseUnlockers[i].Init(this);
+        }
         private void CrimeStarted(Phase phase)
         {
             if (phase != this) return;

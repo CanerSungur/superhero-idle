@@ -16,7 +16,7 @@ namespace SuperheroIdle
 
         private void Update()
         {
-            if (GameManager.GameState == Enums.GameState.Started && _criminal.AttackStarted)
+            if (GameManager.GameState == Enums.GameState.Started && _criminal.AttackStarted && !_criminal.CollisionHandler.FightStarted)
             {
                 _timer -= Time.deltaTime;
                 if (_timer <= 0f)

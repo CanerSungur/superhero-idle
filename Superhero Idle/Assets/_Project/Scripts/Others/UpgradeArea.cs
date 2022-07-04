@@ -9,7 +9,7 @@ namespace SuperheroIdle
     public class UpgradeArea : MonoBehaviour
     {
         private Image _fillImage;
-        private readonly float _openingTime = 3f;
+        private readonly float _openingTime = 2f;
 
         public bool PlayerIsInArea { get; private set; }
 

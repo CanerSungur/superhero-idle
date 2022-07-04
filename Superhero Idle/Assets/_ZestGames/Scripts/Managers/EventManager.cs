@@ -13,10 +13,10 @@ namespace ZestGames
 
     public static class PlayerEvents 
     {
-        public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero, OnExitPhoneBooth, OnExitPhoneBoothSuccessfully;
+        public static Action OnIdle, OnMove, OnChangeToCivillian, OnChangeToHero;
         public static Action<Criminal> OnStartFighting, OnStopFighting;
-        public static Action<PhoneBooth> OnGoToPhoneBooth, OnEnterPhoneBooth;
-        public static Action OnSetCurrentMovementSpeed, OnSetCurrentChangeSpeed, OnSetCurrentFightSpeed, OnSetCurrentIncomeIncrease, OnSetCurrentCostDecrease;
+        public static Action<PhoneBooth> OnGoToPhoneBooth, OnEnterPhoneBooth, OnExitPhoneBooth, OnExitPhoneBoothSuccessfully;
+        public static Action OnSetCurrentMovementSpeed, OnSetCurrentChangeTime, OnSetCurrentFightPower, OnSetCurrentIncomeIncrease, OnSetCurrentCostDecrease;
     }
 
     public static class UiEvents
@@ -48,12 +48,13 @@ namespace ZestGames
 
     public static class UpgradeEvents
     {
-        public static Action OnUpgradeMovementSpeed, OnUpgradeChangeSpeed, OnUpgradeFightSpeed, OnUpgradeIncome, OnUpgradeCostDecrease;
+        public static Action OnUpgradeMovementSpeed, OnUpgradeChangeTime, OnUpgradeFightTime, OnUpgradeIncome, OnUpgradeCostDecrease;
         public static Action OnOpenUpgradeCanvas, OnCloseUpgradeCanvas;
     }
     
     public static class PhaseEvents
     {
         public static Action<PhaseUnlocker, int> OnConsumeMoney;
+        public static Action<PhaseUnlocker, Phase> OnUnlockPhase;
     }
 }

@@ -14,10 +14,15 @@ namespace SuperheroIdle
         private SkinnedMeshRenderer _heroMesh;
         private readonly float _heroTime = 30f;
         private float _finishTimeForHero;
+        private float _currentChangeTime;
 
         [Header("-- EFFECT SETUP --")]
         [SerializeField] private ParticleSystem changeSmokePS;
         [SerializeField] private GameObject capeObj;
+
+        #region GETTERS
+        public float CurrentChangeTime => _currentChangeTime;
+        #endregion
 
         public void Init(Player player)
         {
@@ -25,11 +30,13 @@ namespace SuperheroIdle
             _heroClothes = transform.GetChild(1).gameObject;
             _heroMesh = _heroClothes.GetComponent<SkinnedMeshRenderer>();
             ChangeToCivillian();
-
+            UpdateChangeTime();
+            _currentChangeTime = 1;
             PlayerEvents.OnChangeToCivillian += ChangeToCivillian;
             PlayerEvents.OnChangeToHero += ChangeToHero;
             PlayerEvents.OnStartFighting += DisableMesh;
             PlayerEvents.OnStopFighting += EnableMesh;
+            PlayerEvents.OnSetCurrentChangeTime += UpdateChangeTime;
         }
 
         private void OnDisable()
@@ -38,6 +45,7 @@ namespace SuperheroIdle
             PlayerEvents.OnChangeToHero -= ChangeToHero;
             PlayerEvents.OnStartFighting -= DisableMesh;
             PlayerEvents.OnStopFighting -= EnableMesh;
+            PlayerEvents.OnSetCurrentChangeTime -= UpdateChangeTime;
         }
 
         private void Update()
@@ -59,7 +67,6 @@ namespace SuperheroIdle
             Bounce();
             CameraManager.OnShakeCam?.Invoke();
         }
-
         private void ChangeToHero()
         {
             _currentState = Enums.PlayerState.Hero;
@@ -71,6 +78,12 @@ namespace SuperheroIdle
             _finishTimeForHero = Time.time + _heroTime;
             Bounce();
             CameraManager.OnShakeCam?.Invoke();
+        }
+        private void UpdateChangeTime()
+        {
+            _currentChangeTime = DataManager.CurrentChangeTime;
+            if (_currentChangeTime <= 0.75f)
+                _currentChangeTime = 0.75f;
         }
         private void Bounce()
         {

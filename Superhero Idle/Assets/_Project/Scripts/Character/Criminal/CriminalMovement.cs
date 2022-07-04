@@ -181,6 +181,7 @@ namespace SuperheroIdle
 
             _isBeingTakenToPoliceCar = true;
 
+            _agent.speed = _runAwaySpeed * 1.3f;
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.MedQualityObstacleAvoidance;
             _targetReached = false;
             _agent.isStopped = false;

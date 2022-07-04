@@ -96,11 +96,11 @@ namespace SuperheroIdle
             movementSpeedLevelText.text = $"Level {DataManager.MovementSpeedLevel}";
             movementSpeedCostText.text = DataManager.MovementSpeedCost.ToString();
 
-            changeSpeedLevelText.text = $"Level {DataManager.ChangeSpeedLevel}";
-            changeSpeedCostText.text = DataManager.ChangeSpeedCost.ToString();
+            changeSpeedLevelText.text = $"Level {DataManager.ChangeTimeLevel}";
+            changeSpeedCostText.text = DataManager.ChangeTimeCost.ToString();
 
-            fightSpeedLevelText.text = $"Level {DataManager.FightSpeedLevel}";
-            fightSpeedCostText.text = DataManager.FightSpeedCost.ToString();
+            fightSpeedLevelText.text = $"Level {DataManager.FightPowerLevel}";
+            fightSpeedCostText.text = DataManager.FightPowerCost.ToString();
 
             incomeIncreaseLevelText.text = $"Level {DataManager.IncomeIncreaseLevel}";
             incomeIncreaseCostText.text = DataManager.IncomeIncreaseCost.ToString();
@@ -113,8 +113,8 @@ namespace SuperheroIdle
         private void CheckForMoneySufficiency()
         {
             movementSpeedUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.MovementSpeedCost;
-            changeSpeedUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.ChangeSpeedCost;
-            fightSpeedUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.FightSpeedCost;
+            changeSpeedUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.ChangeTimeCost;
+            fightSpeedUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.FightPowerCost;
             incomeIncreaseUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.IncomeIncreaseCost;
             costDecreaseUpgradeButton.interactable = DataManager.TotalMoney >= DataManager.CostDecreaseCost;
         }
@@ -122,8 +122,8 @@ namespace SuperheroIdle
         #region UPGRADE FUNCTIONS
         private void CloseCanvas() => UpgradeEvents.OnCloseUpgradeCanvas?.Invoke();
         private void UpgradeMovementSpeed() => UpgradeEvents.OnUpgradeMovementSpeed?.Invoke();
-        private void UpgradeChangeSpeed() => UpgradeEvents.OnUpgradeChangeSpeed?.Invoke();
-        private void UpgradeFightSpeed() => UpgradeEvents.OnUpgradeFightSpeed?.Invoke();
+        private void UpgradeChangeSpeed() => UpgradeEvents.OnUpgradeChangeTime?.Invoke();
+        private void UpgradeFightSpeed() => UpgradeEvents.OnUpgradeFightTime?.Invoke();
         private void UpgradeIncome() => UpgradeEvents.OnUpgradeIncome?.Invoke();
         private void UpgradeCostDecrease() => UpgradeEvents.OnUpgradeCostDecrease?.Invoke();
         #endregion

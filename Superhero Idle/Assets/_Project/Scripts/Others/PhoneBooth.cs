@@ -1,19 +1,25 @@
 using UnityEngine;
 using ZestGames;
 using TMPro;
+using DG.Tweening;
 
 namespace SuperheroIdle
 {
     public class PhoneBooth : MonoBehaviour
     {
-        [SerializeField] private int number = 1;
-        private Animator _animator;
+        private Phase _belongedPhase;
+        [SerializeField] private int number = 0;
         private Collider _collider;
 
         [Header("-- APPEREANCE SETUP --")]
         [SerializeField] private Material activeMaterial;
         [SerializeField] private Material passivedMaterial;
         private SkinnedMeshRenderer[] _meshes;
+
+        #region SCRIPT REFERENCES
+        private PhoneBoothAnimationController _animationController;
+        public PhoneBoothAnimationController AnimationController => _animationController == null ? _animationController = GetComponent<PhoneBoothAnimationController>() : _animationController;
+        #endregion
 
         #region PROPERTIES
         public bool PlayerIsInArea { get; set; }
@@ -24,42 +30,40 @@ namespace SuperheroIdle
         public bool MoneyCanBeSpent => DataManager.TotalMoney > 0 && _consumedMoney < _requiredMoney;
         public Transform MoneyImageTransform => moneyImageTransform;
         #endregion
-
-        #region ANIMATION
-        private readonly int _enterID = Animator.StringToHash("Enter");
-        private readonly int _exitID = Animator.StringToHash("Exit");
-        private readonly int _exitSuccessfullyID = Animator.StringToHash("ExitSuccessful");
-        #endregion
-
+        
         #region MONEY CONSUME
         [Header("-- MONEY CONSUME SETUP --")]
         [SerializeField] private GameObject moneyCanvas;
         [SerializeField] private Transform moneyImageTransform;
         [SerializeField] private TextMeshProUGUI remainingMoneyText;
         private int _requiredMoney = 100;
+        private readonly int _coreRequiredMoney = 100;
         private int _consumedMoney;
         #endregion
 
         private void Init()
         {
-            if (!_animator)
+            if (!_collider)
             {
-                _animator = GetComponent<Animator>();
                 _collider = GetComponent<Collider>();
                 _meshes = GetComponentsInChildren<SkinnedMeshRenderer>();
             }
-            
+
+            AnimationController.Init(this);
+
             EnableTrigger();
             EntryPosition = transform.GetChild(1).position;
             _consumedMoney = 0;
             DoorIsOpen = IsActivated = PlayerIsInArea = false;
-
+            
+            UpdateRequiredMoney();
             LoadData();
             CheckForActivation();
             UpdateRemainingMoneyText();
 
             PlayerEvents.OnEnterPhoneBooth += HeroEntered;
-            PlayerEvents.OnExitPhoneBooth += HeroExit;
+            PlayerEvents.OnExitPhoneBoothSuccessfully += HeroExitSuccessfully;
+            PlayerEvents.OnSetCurrentCostDecrease += UpdateRequiredMoney;
         }
         private void OnEnable()
         {
@@ -69,20 +73,38 @@ namespace SuperheroIdle
         private void OnDisable()
         {
             PlayerEvents.OnEnterPhoneBooth -= HeroEntered;
-            PlayerEvents.OnExitPhoneBooth -= HeroExit;
+            PlayerEvents.OnExitPhoneBoothSuccessfully -= HeroExitSuccessfully;
+            PlayerEvents.OnSetCurrentCostDecrease -= UpdateRequiredMoney;
 
             SaveData();
         }
-        
+        #region HELPERS
+        private void Bounce()
+        {
+            transform.DORewind();
+            transform.DOShakeScale(1f, 1f);
+        }
         private void EnableTrigger() => _collider.isTrigger = true;
         private void DisableTrigger() => _collider.isTrigger = false;
+        #endregion
+
+        #region MONEY FUNCTIONS
+        private void UpdateRequiredMoney()
+        {
+            if (!_belongedPhase)
+                _belongedPhase = GetComponentInParent<Phase>();
+            
+            _requiredMoney = _coreRequiredMoney * _belongedPhase.Number;
+            _requiredMoney -= (int)(_requiredMoney * DataManager.CurrentCostDecrease);
+            UpdateRemainingMoneyText();
+        }
+        #endregion
+
         private void HeroEntered(PhoneBooth phoneBooth)
         {
             if (phoneBooth != this) return;
-            _animator.SetTrigger(_enterID);
             DoorIsOpen = true;
         }
-        private void HeroExit() => _animator.SetTrigger(_exitID);
         private void UpdateRemainingMoneyText() => remainingMoneyText.text = (_requiredMoney - _consumedMoney).ToString();
         private void DeActivate()
         {
@@ -91,19 +113,21 @@ namespace SuperheroIdle
             for (int i = 0; i < _meshes.Length; i++)
                 _meshes[i].material = passivedMaterial;
         }
-        #region PUBLICS
-        public void HeroExitSuccessfully()
+        private void HeroExitSuccessfully(PhoneBooth phoneBooth)
         {
-            _animator.SetTrigger(_exitSuccessfullyID);
+            if (phoneBooth != this) return;
             DoorIsOpen = false;
         }
-        public void Activate()
+        private void Activate()
         {
+            Bounce();
             IsActivated = true;
             moneyCanvas.SetActive(false);
             for (int i = 0; i < _meshes.Length; i++)
                 _meshes[i].material = activeMaterial;
         }
+
+        #region PUBLICS
         public void ConsumeMoney(int amount)
         {
             if (amount > (_requiredMoney - _consumedMoney))

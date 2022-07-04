@@ -12,8 +12,6 @@ namespace SuperheroIdle
         private CharacterController _characterController;
 
         [Header("-- MOVEMENT SETUP --")]
-        [SerializeField] private float civillianSpeed = 5f;
-        [SerializeField] private float heroSpeed = 10f;
         [SerializeField] private LayerMask walkableLayerMask;
         private Vector3 _playerVelocity;
         private const float GRAVITY_VALUE = -5f;
@@ -23,6 +21,8 @@ namespace SuperheroIdle
         private bool _enteringPhoneBooth = false;
         private PhoneBooth _activatedPhoneBooth = null;
 
+        public float CivillianSpeed => DataManager.CurrentMovementSpeed;
+        public float HeroSpeed => DataManager.CurrentMovementSpeed * 1.5f;
         public bool IsMoving => _player.InputHandler.InputValue != Vector3.zero;
         public bool IsGrounded => Physics.Raycast(_player.Collider.bounds.center, Vector3.down, _player.Collider.bounds.extents.y + 0.01f, walkableLayerMask);
 
@@ -31,11 +31,12 @@ namespace SuperheroIdle
             _player = player;
             _characterController = GetComponent<CharacterController>();
 
-            _currentSpeed = civillianSpeed;
+            _currentSpeed = CivillianSpeed;
 
             PlayerEvents.OnGoToPhoneBooth += GoToPhoneBooth;
             PlayerEvents.OnChangeToCivillian += SetCivillianSpeed;
             PlayerEvents.OnChangeToHero += SetHeroSpeed;
+            PlayerEvents.OnSetCurrentMovementSpeed += UpdateMovementSpeed;
             UpgradeEvents.OnOpenUpgradeCanvas += RotateForUpgradeCamera;
         }
 
@@ -44,6 +45,7 @@ namespace SuperheroIdle
             PlayerEvents.OnGoToPhoneBooth -= GoToPhoneBooth;
             PlayerEvents.OnChangeToCivillian -= SetCivillianSpeed;
             PlayerEvents.OnChangeToHero -= SetHeroSpeed;
+            PlayerEvents.OnSetCurrentMovementSpeed -= UpdateMovementSpeed;
             UpgradeEvents.OnOpenUpgradeCanvas -= RotateForUpgradeCamera;
         }
 
@@ -99,20 +101,29 @@ namespace SuperheroIdle
         {
             transform.DOMove(transform.position + (transform.forward * 1.5f), 0.5f);
             PlayerEvents.OnEnterPhoneBooth?.Invoke(_activatedPhoneBooth);
-            Delayer.DoActionAfterDelay(this, 3f, ExitPhoneBooth);
+            Delayer.DoActionAfterDelay(this, _player.StateController.CurrentChangeTime, ExitPhoneBooth);
         }
         private void ExitPhoneBooth()
         {
             _enteringPhoneBooth = false;
 
-            PlayerEvents.OnExitPhoneBooth?.Invoke();
+            PlayerEvents.OnExitPhoneBooth?.Invoke(_activatedPhoneBooth);
             PlayerEvents.OnChangeToHero?.Invoke();
         }
         private void RotateForUpgradeCamera()
         {
             transform.rotation = Quaternion.identity;
         }
-        private void SetCivillianSpeed() => _currentSpeed = civillianSpeed;
-        private void SetHeroSpeed() => _currentSpeed = heroSpeed;
+        private void SetCivillianSpeed() => _currentSpeed = CivillianSpeed;
+        private void SetHeroSpeed() => _currentSpeed = HeroSpeed;
+        private void UpdateMovementSpeed()
+        {
+            if (_player.StateController.CurrentState == Enums.PlayerState.Civillian)
+                _currentSpeed = CivillianSpeed;
+            else if (_player.StateController.CurrentState == Enums.PlayerState.Hero)
+                _currentSpeed = HeroSpeed;
+            else
+                Debug.LogWarning("Invalid player state!");
+        }
     }
 }

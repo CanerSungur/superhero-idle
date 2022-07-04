@@ -44,7 +44,7 @@ namespace SuperheroIdle
             if (other.TryGetComponent(out PhoneBooth phoneBooth))
             {
                 if (phoneBooth.IsActivated && phoneBooth.DoorIsOpen)
-                    phoneBooth.HeroExitSuccessfully();
+                     PlayerEvents.OnExitPhoneBoothSuccessfully?.Invoke(phoneBooth);
 
                 if (phoneBooth.CanBeActivated && phoneBooth.PlayerIsInArea)
                 {

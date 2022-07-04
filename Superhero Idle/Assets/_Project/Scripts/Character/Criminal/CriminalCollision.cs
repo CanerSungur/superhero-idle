@@ -7,26 +7,28 @@ namespace SuperheroIdle
     public class CriminalCollision : MonoBehaviour
     {
         private Criminal _criminal;
-        
+
         [Header("-- FIGHT SETUP --")]
-        [SerializeField] private float fightDuration = 2f;
-        private float _runningAwayFightDuration, _currentFightDuration;
+        private float _currentFightDuration;
         private bool _fightStarted = false;
         private IEnumerator _getDefeatedEnum;
+
+        public bool FightStarted => _fightStarted;
 
         public void Init(Criminal criminal)
         {
             _criminal = criminal;
-            _runningAwayFightDuration = fightDuration * 0.75f;
-            _currentFightDuration = fightDuration;
             _fightStarted = false;
             _getDefeatedEnum = GetDefeated();
+
+            _currentFightDuration = _criminal.FightDuration;
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out Player player) && !_fightStarted && (_criminal.AttackStarted || _criminal.RunningAway) && player.StateController.CurrentState == Enums.PlayerState.Hero)
             {
+                Debug.Log(_criminal.FightDuration);
                 StartCoroutine(_getDefeatedEnum);
                 PlayerEvents.OnStartFighting?.Invoke(_criminal);
                 _criminal.Movement.Stop();
@@ -44,7 +46,7 @@ namespace SuperheroIdle
                 PlayerEvents.OnStopFighting?.Invoke(_criminal);
 
                 _criminal.OnRunAway?.Invoke(false);// false means crime is a fail.
-                _currentFightDuration = _runningAwayFightDuration;
+                _currentFightDuration = _criminal.RunningAwayFightDuration;
             }
         }
 
@@ -65,6 +67,14 @@ namespace SuperheroIdle
             PlayerEvents.OnStopFighting?.Invoke(_criminal);
 
             _fightStarted = false;
+        }
+
+        public void UpdateFightDuration() 
+        {
+            if (_criminal.RunningAway)
+                _currentFightDuration = _criminal.RunningAwayFightDuration;
+            else
+                _currentFightDuration = _criminal.FightDuration;
         }
     }
 }

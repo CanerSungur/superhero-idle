@@ -18,6 +18,7 @@ namespace SuperheroIdle
         #region GETTERS
         public Player Player => _player;
         public CriminalAttackDecider AttackDecider => _attackDecider;
+        public CriminalCollision CollisionHandler => _collisionHandler;
         #endregion
 
         #region EVENTS
@@ -43,6 +44,17 @@ namespace SuperheroIdle
         private int _currentValue, _runningAwayValue;
         private IEnumerator _disableAfterTimeEnum;
 
+        [Header("-- FIGHT SETUP --")]
+        private readonly float _coreFightDuration = 2f;
+        private float _fightDifficulty;
+        private float _fightDuration;
+        public float FightDuration
+        {
+            get { return _fightDuration <= 0.75 ? 0.75f : _fightDuration; }
+            private set { _fightDuration = value; }
+        }
+        public float RunningAwayFightDuration => FightDuration * 0.75f;
+
         private void OnEnable()
         {
             _runningAwayValue = (int)(value * 0.5f);
@@ -53,7 +65,7 @@ namespace SuperheroIdle
 
             ActivatedPoliceCar = null;
             AttackStarted = RunningAway = GettingTakenToPoliceCar = false;
-
+            
             Init();
 
             #region SCRIPT INITIALIZERS
@@ -78,6 +90,7 @@ namespace SuperheroIdle
             OnDefeated += Defeated;
             OnRunAway += RunAway;
             OnGetTakenToPoliceCar += GetTakenToPoliceCar;
+            PlayerEvents.OnSetCurrentFightPower += UpdateFightDuration;
         }
 
         private void OnDisable()
@@ -90,13 +103,26 @@ namespace SuperheroIdle
             OnDefeated -= Defeated;
             OnRunAway -= RunAway;
             OnGetTakenToPoliceCar -= GetTakenToPoliceCar;
+            PlayerEvents.OnSetCurrentFightPower -= UpdateFightDuration;
         }
+
+        #region FIGHT DURATION FUNCTIONS
+        private void UpdateFightDuration()
+        {
+            if (BelongedPhase == null) return;
+            //_fightDifficulty = BelongedPhase.Number;
+            //Debug.Log(_fightDifficulty);
+            FightDuration = (_coreFightDuration * _fightDifficulty) - DataManager.CurrentFightPower;
+            CollisionHandler.UpdateFightDuration();
+        }
+        #endregion
 
         private void GetTakenToPoliceCar(PoliceCar ignoreThis) => GettingTakenToPoliceCar = true;
         private void Defeated()
         {
             IsAttacking = AttackStarted = RunningAway = GettingTakenToPoliceCar = false;
             CharacterManager.RemoveCriminalCommitingCrime(this);
+            CrimeEvents.OnCrimeEnded?.Invoke(BelongedPhase);
 
             StartSpawningMoney(0.05f, _currentValue, transform.position);
 
@@ -154,7 +180,13 @@ namespace SuperheroIdle
         }
 
         #region PUBLICS
-        public void SetBelongedPhase(Phase phase) => BelongedPhase = phase;
+        public void SetBelongedPhase(Phase phase)
+        {
+            BelongedPhase = phase;
+            _fightDifficulty = BelongedPhase.Number;
+            UpdateFightDuration();
+        }
+            
         public void SetAttackState(bool isAttacking) => IsAttacking = isAttacking;
         #endregion
 

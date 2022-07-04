@@ -17,7 +17,7 @@ namespace SuperheroIdle
 
         [Header("-- SETUP --")]
         [SerializeField] private float speed = 1f;
-        private readonly float _takenToAmbulanceSpeed = 2.5f;
+        private readonly float _takenToAmbulanceSpeed = 5f;
         private float _currentSpeed;
 
         public bool IsMoving => _agent.velocity.magnitude >= 0.1f;
