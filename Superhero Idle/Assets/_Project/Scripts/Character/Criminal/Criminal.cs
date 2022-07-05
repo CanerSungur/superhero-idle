@@ -19,6 +19,8 @@ namespace SuperheroIdle
         public Player Player => _player;
         public CriminalAttackDecider AttackDecider => _attackDecider;
         public CriminalCollision CollisionHandler => _collisionHandler;
+        public int DefaultValue => _coreValue * BelongedPhase.Number;
+        public int RunningAwayValue => (int)(DefaultValue * 0.75f);
         #endregion
 
         #region EVENTS
@@ -40,8 +42,8 @@ namespace SuperheroIdle
         #endregion
 
         [Header("-- SETUP --")]
-        [SerializeField] private int value = 10;
-        private int _currentValue, _runningAwayValue;
+        private int _currentValue;
+        private readonly int _coreValue = 10;
         private IEnumerator _disableAfterTimeEnum;
 
         [Header("-- FIGHT SETUP --")]
@@ -57,8 +59,9 @@ namespace SuperheroIdle
 
         private void OnEnable()
         {
-            _runningAwayValue = (int)(value * 0.5f);
-            _currentValue = value;
+            //_runningAwayValue = (int)(value * 0.5f);
+            if (BelongedPhase)
+                _currentValue = DefaultValue;
 
             RightCarryPoint = transform.GetChild(transform.childCount - 1);
             LeftCarryPoint = transform.GetChild(transform.childCount - 2);
@@ -144,7 +147,7 @@ namespace SuperheroIdle
         {
             IsAttacking = AttackStarted = GettingTakenToPoliceCar = false;
             RunningAway = true;
-            _currentValue = _runningAwayValue;
+            _currentValue = RunningAwayValue;
 
             if (success)
             {

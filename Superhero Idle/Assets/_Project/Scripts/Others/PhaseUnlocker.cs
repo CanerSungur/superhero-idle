@@ -70,6 +70,8 @@ namespace SuperheroIdle
 
         private void UnlockPhase()
         {
+            ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.ConfettiExplosion, transform.position, Quaternion.identity);
+
             if (!phaseToBeUnlocked.gameObject.activeSelf)
                 phaseToBeUnlocked.gameObject.SetActive(true);
 

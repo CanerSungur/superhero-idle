@@ -9,6 +9,7 @@ namespace SuperheroIdle
     public class UpgradeCanvas : MonoBehaviour
     {
         private CustomButton _closeButton;
+        private CustomButton _emptySpaceButton; // will trigger close button.
         public static bool IsOpen { get; private set; }
 
         #region ANIMATION
@@ -48,12 +49,14 @@ namespace SuperheroIdle
             {
                 _animator = GetComponent<Animator>();
                 _closeButton = transform.GetChild(0).GetChild(0).GetComponent<CustomButton>();
+                _emptySpaceButton = transform.GetChild(1).GetComponent<CustomButton>();
             }
 
             Delayer.DoActionAfterDelay(this, 0.5f, UpdateTexts);
 
             IsOpen = false;
             _closeButton.onClick.AddListener(CloseCanvasClicked);
+            _emptySpaceButton.onClick.AddListener(CloseCanvasClicked);
 
             movementSpeedUpgradeButton.onClick.AddListener(MovementSpeedUpgradeClicked);
             changeSpeedUpgradeButton.onClick.AddListener(ChangeSpeedUpgradeClicked);
@@ -74,6 +77,7 @@ namespace SuperheroIdle
         private void OnDisable()
         {
             _closeButton.onClick.RemoveListener(CloseCanvasClicked);
+            _emptySpaceButton.onClick.RemoveListener(CloseCanvasClicked);
 
             movementSpeedUpgradeButton.onClick.RemoveListener(MovementSpeedUpgradeClicked);
             changeSpeedUpgradeButton.onClick.RemoveListener(ChangeSpeedUpgradeClicked);

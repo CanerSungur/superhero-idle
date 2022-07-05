@@ -20,7 +20,7 @@ namespace SuperheroIdle
         public Enums.CriminalAttackType AttackType { get; private set; }
         public Civillian TargetCivillian { get; private set; }
         public ATM TargetAtm { get; private set; }
-        public bool CanAttack => _criminal && _criminal.Player.StateController.CurrentState == Enums.PlayerState.Civillian && !_criminal.IsAttacking && !_criminal.RunningAway && _criminal.BelongedPhase.CanCrimeHappen && Time.time >= _decisionTime;
+        public bool CanAttack => GameManager.GameState == Enums.GameState.Started && _criminal && _criminal.Player.StateController.CurrentState == Enums.PlayerState.Civillian && !_criminal.IsAttacking && !_criminal.RunningAway && _criminal.BelongedPhase.CanCrimeHappen && Time.time >= _decisionTime;
         #endregion
 
         public void Init(Criminal criminal)
@@ -35,7 +35,8 @@ namespace SuperheroIdle
 
         private void OnDisable()
         {
-            StopCoroutine(_makeDecisionEnum);
+            if (_makeDecisionEnum != null)
+                StopCoroutine(_makeDecisionEnum);
         }
 
         //private void Update()

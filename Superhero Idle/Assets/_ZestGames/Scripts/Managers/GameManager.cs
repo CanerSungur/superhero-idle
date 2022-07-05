@@ -21,7 +21,7 @@ namespace ZestGames
         {
             Application.targetFrameRate = 240;
             // TODO: Check for DOTween capacity requirement.
-            //DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity();
+            DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity(19530, 50);
 
             objectPooler.Init(this);
 
