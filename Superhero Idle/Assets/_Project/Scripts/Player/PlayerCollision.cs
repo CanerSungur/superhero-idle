@@ -18,8 +18,7 @@ namespace SuperheroIdle
             {
                 if (phoneBooth.IsActivated && _player.StateController.CurrentState == Enums.PlayerState.Civillian)
                     PlayerEvents.OnGoToPhoneBooth?.Invoke(phoneBooth);
-
-                if (phoneBooth.CanBeActivated && !phoneBooth.PlayerIsInArea)
+                else if (phoneBooth.CanBeActivated && !phoneBooth.PlayerIsInArea)
                 {
                     phoneBooth.PlayerIsInArea = true;
                     //phoneBooth.Activate();
@@ -45,8 +44,7 @@ namespace SuperheroIdle
             {
                 if (phoneBooth.IsActivated && phoneBooth.DoorIsOpen)
                      PlayerEvents.OnExitPhoneBoothSuccessfully?.Invoke(phoneBooth);
-
-                if (phoneBooth.CanBeActivated && phoneBooth.PlayerIsInArea)
+                else if (phoneBooth.CanBeActivated && phoneBooth.PlayerIsInArea)
                 {
                     phoneBooth.PlayerIsInArea = false;
                     _player.StopSpendingMoney(phoneBooth);

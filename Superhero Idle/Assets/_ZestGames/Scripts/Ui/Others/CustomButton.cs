@@ -31,8 +31,7 @@ namespace ZestGames
 
         private void Clicked(Action action)
         {
-            // Play audio
-            //AudioHandler.PlayAudio(AudioHandler.AudioType.Button_Click);
+            AudioHandler.PlayAudio(Enums.AudioType.Button_Click);
 
             // Reset and Play the animation
             if (_anim)

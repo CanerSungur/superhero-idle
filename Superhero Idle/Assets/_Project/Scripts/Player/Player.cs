@@ -44,6 +44,8 @@ namespace SuperheroIdle
         private readonly float _nearbyCrimeDistanceLimit = 64f;
         #endregion
 
+        public bool IsFighting { get; private set; }
+
         private void Start()
         {
             ClosestActiveCriminal = null;
@@ -57,12 +59,24 @@ namespace SuperheroIdle
             AnimationController.Init(this);
             CollisionController.Init(this);
             StateController.Init(this);
+
+            PlayerEvents.OnStartFighting += StartedFighting;
+            PlayerEvents.OnStopFighting += StoppedFighting;
+        }
+
+        private void OnDisable()
+        {
+            PlayerEvents.OnStartFighting -= StartedFighting;
+            PlayerEvents.OnStopFighting -= StoppedFighting;
         }
 
         private void Update()
         {
             GetClosestActiveCriminal();
         }
+
+        private void StartedFighting(Criminal ignoreThis) => IsFighting = true;
+        private void StoppedFighting(Criminal ignoreThis) => IsFighting = false;
 
         #region SPEND MONEY FUNCTIONS
         public void StartSpendingMoney(PhaseUnlocker phaseUnlocker)
@@ -107,7 +121,6 @@ namespace SuperheroIdle
         {
             while (phaseUnlocker.MoneyCanBeSpent)
             {
-                //Debug.Log("Consumed Money: " + _currentMoneySpendValue);
                 phaseUnlocker.ConsumeMoney(_currentMoneySpendValue);
                 yield return new WaitForSeconds(_currentSpendMoneyDelay);
                 //DecreaseMoneyDelay();
@@ -118,7 +131,6 @@ namespace SuperheroIdle
         {
             while (phoneBooth.MoneyCanBeSpent)
             {
-                //Debug.Log("Consumed Money: " + _currentMoneySpendValue);
                 phoneBooth.ConsumeMoney(_currentMoneySpendValue);
                 yield return new WaitForSeconds(_currentSpendMoneyDelay);
                 //DecreaseMoneyDelay();

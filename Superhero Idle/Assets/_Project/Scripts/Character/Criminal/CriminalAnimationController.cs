@@ -26,6 +26,7 @@ namespace SuperheroIdle
         {
             _criminal = GetComponent<Criminal>();
             _animator = GetComponent<Animator>();
+            _animator.Rebind();
 
             _criminal.OnIdle += Idle;
             _criminal.OnWalk += Walk;

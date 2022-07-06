@@ -57,4 +57,9 @@ namespace ZestGames
         public static Action<PhaseUnlocker, int> OnConsumeMoney;
         public static Action<PhaseUnlocker, Phase> OnUnlockPhase;
     }
+
+    public static class AudioEvents
+    {
+        public static Action OnPlayCollectMoney, OnPlaySpendMoney, OnStartPunch, OnStopPunch;
+    }
 }

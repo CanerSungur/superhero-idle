@@ -11,6 +11,7 @@ namespace SuperheroIdle
         public Enums.PlayerState CurrentState => _currentState;
 
         private GameObject _heroClothes;
+        private SkinnedMeshRenderer _baseMesh;
         private SkinnedMeshRenderer _heroMesh;
         private readonly float _heroTime = 30f;
         private float _finishTimeForHero;
@@ -28,6 +29,7 @@ namespace SuperheroIdle
         {
             _player = player;
             _heroClothes = transform.GetChild(1).gameObject;
+            _baseMesh = transform.GetChild(0).GetComponent<SkinnedMeshRenderer>();
             _heroMesh = _heroClothes.GetComponent<SkinnedMeshRenderer>();
             ChangeToCivillian();
             UpdateChangeTime();
@@ -58,6 +60,8 @@ namespace SuperheroIdle
 
         private void ChangeToCivillian()
         {
+            AudioHandler.PlayAudio(Enums.AudioType.StateChange, 0.7f);
+
             _currentState = Enums.PlayerState.Civillian;
             changeSmokePS.Play();
 
@@ -65,10 +69,12 @@ namespace SuperheroIdle
             capeObj.SetActive(false);
 
             Bounce();
-            CameraManager.OnShakeCam?.Invoke();
+            CameraManager.OnShakeCamForAWhile?.Invoke();
         }
         private void ChangeToHero()
         {
+            AudioHandler.PlayAudio(Enums.AudioType.StateChange, 0.7f);
+
             _currentState = Enums.PlayerState.Hero;
             changeSmokePS.Play();
 
@@ -77,7 +83,7 @@ namespace SuperheroIdle
 
             _finishTimeForHero = Time.time + _heroTime;
             Bounce();
-            CameraManager.OnShakeCam?.Invoke();
+            CameraManager.OnShakeCamForAWhile?.Invoke();
         }
         private void UpdateChangeTime()
         {
@@ -91,7 +97,7 @@ namespace SuperheroIdle
             transform.DOShakeScale(1f, 1f);
         }
 
-        public void DisableMesh(Criminal ignoreThis) => _heroMesh.enabled = false;
-        public void EnableMesh(Criminal ignoreThis) => _heroMesh.enabled = true;
+        public void DisableMesh(Criminal ignoreThis) => _baseMesh.enabled = false;
+        public void EnableMesh(Criminal ignoreThis) => _baseMesh.enabled = true;
     }
 }

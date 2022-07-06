@@ -217,6 +217,7 @@ MonoBehaviour:
   maxCivillianCount: 25
   maxCriminalCount: 5
   maxCrimeCount: 5
+  phaseUnlockers: []
 --- !u!1 &2264854883673032485
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,7 +581,7 @@ Transform:
   m_GameObject: {fileID: 7681692293969164028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.102, y: -0.273, z: -0.36}
-  m_LocalScale: {x: 9.205896, y: 0.2125, z: 9.642269}
+  m_LocalScale: {x: 9.320971, y: 0.2125, z: 9.642269}
   m_Children: []
   m_Father: {fileID: 2571590424174909302}
   m_RootOrder: 0

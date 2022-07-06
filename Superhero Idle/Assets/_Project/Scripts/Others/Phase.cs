@@ -7,6 +7,7 @@ namespace SuperheroIdle
 {
     public class Phase : MonoBehaviour
     {
+        private PhaseManager _phaseManager;
         private Collider _collider;
         public Collider Collider => _collider == null ? _collider = transform.GetChild(0).GetComponent<Collider>() : _collider;
 
@@ -22,6 +23,10 @@ namespace SuperheroIdle
         [SerializeField] private int maxCrimeCount = 5;
         private int _currentCrimeCount = 0;
         public bool CanCrimeHappen => _currentCrimeCount < maxCrimeCount;
+
+        [Header("-- PHASE UNLOCKER SETUP --")]
+        [SerializeField] private PhaseUnlocker[] phaseUnlockers;
+        public bool IsUnlocked { get; private set; }
 
         #region CIVILLIAN LIST SYSTEM
         private List<Civillian> _activeCivillians;
@@ -53,29 +58,18 @@ namespace SuperheroIdle
         }
         #endregion
 
-        #region PHASE UNLOCKER SECTION
-        private List<PhaseUnlocker> _phaseUnlockers;
-        public List<PhaseUnlocker> PhaseUnlockers => _phaseUnlockers == null ? _phaseUnlockers = new List<PhaseUnlocker>() : _phaseUnlockers;
-        public void AddPhase(PhaseUnlocker phaseUnlocker)
+        public void Init(PhaseManager phaseManager)
         {
-            if (!PhaseUnlockers.Contains(phaseUnlocker))
-                PhaseUnlockers.Add(phaseUnlocker);
-        }
-        public void RemovePhase(PhaseUnlocker phaseUnlocker)
-        {
-            if (PhaseUnlockers.Contains(phaseUnlocker))
-                PhaseUnlockers.Remove(phaseUnlocker);
-        }
-        #endregion
+            _phaseManager = phaseManager;
+            IsUnlocked = _phaseManager.UnlockedPhaseNumbers.Contains(number);
 
-        private void Init()
-        {
             for (int i = 0; i < maxCivillianCount; i++)
                 SpawnCivillian();
 
             for (int i = 0; i < maxCriminalCount; i++)
                 SpawnCriminal();
 
+            //Load();
             InitializePhaseUnlockers();
 
             PeopleEvents.OnCivillianDecreased += SpawnCivillian;
@@ -83,11 +77,6 @@ namespace SuperheroIdle
 
             CrimeEvents.OnCrimeStarted += CrimeStarted;
             CrimeEvents.OnCrimeEnded += CrimeEnded;
-        }
-
-        private void Start()
-        {
-            Delayer.DoActionAfterDelay(this, 2f, Init);
         }
 
         private void OnDisable()
@@ -101,8 +90,18 @@ namespace SuperheroIdle
 
         private void InitializePhaseUnlockers()
         {
-            for (int i = 0; i < PhaseUnlockers.Count; i++)
-                PhaseUnlockers[i].Init(this);
+            for (int i = 0; i < phaseUnlockers.Length; i++)
+            {
+                PhaseUnlocker phaseUnlocker = phaseUnlockers[i];
+
+                if (_phaseManager.UnlockedPhaseNumbers.Contains(phaseUnlocker.PhaseToBeUnlocked.Number))
+                    phaseUnlocker.gameObject.SetActive(false);
+                else
+                {
+                    phaseUnlocker.gameObject.SetActive(true);
+                    phaseUnlocker.Init(this);
+                }
+            }
         }
         private void CrimeStarted(Phase phase)
         {
@@ -126,5 +125,17 @@ namespace SuperheroIdle
             AddActiveCriminal(criminal);
             criminal.SetBelongedPhase(this);
         }
+
+        //#region SAVE-LOAD FUNCTIONS
+        //private void Save()
+        //{
+        //    PlayerPrefs.SetInt($"Phase-{number}", IsUnlocked == true ? 1 : 0);
+        //    PlayerPrefs.Save();
+        //}
+        //private void Load()
+        //{
+        //    IsUnlocked = PlayerPrefs.GetInt($"Phase-{number}") == 1;
+        //}
+        //#endregion
     }
 }

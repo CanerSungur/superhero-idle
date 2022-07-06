@@ -29,6 +29,7 @@ namespace SuperheroIdle
 
         public void Init(Phase phase)
         {
+            _belongedPhase = phase;
             PlayerIsInArea = false;
             UpdateRequiredMoney();
             phaseText.text = $"PHASE {phaseToBeUnlocked.Number}";
@@ -39,43 +40,33 @@ namespace SuperheroIdle
             PhaseEvents.OnUnlockPhase += HandleUnlockForOtherPhases;
             PlayerEvents.OnSetCurrentCostDecrease += UpdateRequiredMoney;
         }
-
-        private void OnEnable()
-        {
-            _belongedPhase = GetComponentInParent<Phase>();
-            _belongedPhase.AddPhase(this);
-        }
-
-        private void OnApplicationQuit()
-        {
-            SaveConsumedMoney();
-        }
-
         private void OnApplicationPause(bool pause)
+        {
+            SaveConsumedMoney();    
+        }
+        private void OnApplicationQuit()
         {
             SaveConsumedMoney();
         }
 
         private void OnDisable()
         {
-            SaveConsumedMoney();
-
-            if (_belongedPhase)
-                _belongedPhase.RemovePhase(this);
-            
             PhaseEvents.OnConsumeMoney -= UpdateConsumedMoney;
             PhaseEvents.OnUnlockPhase -= HandleUnlockForOtherPhases;
             PlayerEvents.OnSetCurrentCostDecrease -= UpdateRequiredMoney;
+            
+            SaveConsumedMoney();
         }
 
         private void UnlockPhase()
         {
             ObjectPooler.Instance.SpawnFromPool(Enums.PoolStamp.ConfettiExplosion, transform.position, Quaternion.identity);
 
-            if (!phaseToBeUnlocked.gameObject.activeSelf)
-                phaseToBeUnlocked.gameObject.SetActive(true);
+            //if (!phaseToBeUnlocked.gameObject.activeSelf)
+            //    phaseToBeUnlocked.gameObject.SetActive(true);
 
             PhaseEvents.OnUnlockPhase?.Invoke(this, phaseToBeUnlocked);
+            AudioHandler.PlayAudio(Enums.AudioType.PhaseUnlockUnlock);
             gameObject.SetActive(false);
         }
         private void HandleUnlockForOtherPhases(PhaseUnlocker phaseUnlocker, Phase phaseToBeUnlocked)
@@ -95,8 +86,8 @@ namespace SuperheroIdle
             _consumedMoney = PlayerPrefs.GetInt($"Phase-{number}-ConsumedMoney", 0);
             UpdateRemainingMoneyText();
 
-            if (_consumedMoney == _requiredMoney)
-                UnlockPhase();
+            //if (_consumedMoney == _requiredMoney)
+            //    UnlockPhase();
         }
         #endregion
 

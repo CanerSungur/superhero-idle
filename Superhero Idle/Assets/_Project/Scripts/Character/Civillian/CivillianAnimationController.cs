@@ -26,6 +26,7 @@ namespace SuperheroIdle
         {
             _civillian = GetComponent<Civillian>();
             _animator = GetComponent<Animator>();
+            _animator.Rebind();
             SetCivillianIndex();
 
             _civillian.OnIdle += Idle;

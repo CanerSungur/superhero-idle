@@ -28,9 +28,9 @@ namespace SuperheroIdle
         {
             if (other.TryGetComponent(out Player player) && !_fightStarted && (_criminal.AttackStarted || _criminal.RunningAway) && player.StateController.CurrentState == Enums.PlayerState.Hero)
             {
-                Debug.Log(_criminal.FightDuration);
                 StartCoroutine(_getDefeatedEnum);
                 PlayerEvents.OnStartFighting?.Invoke(_criminal);
+                AudioEvents.OnStartPunch?.Invoke();
                 _criminal.Movement.Stop();
             }
         }
@@ -44,6 +44,7 @@ namespace SuperheroIdle
                 _getDefeatedEnum = GetDefeated(); // Reset enumerator.
 
                 PlayerEvents.OnStopFighting?.Invoke(_criminal);
+                AudioEvents.OnStopPunch?.Invoke();
 
                 _criminal.OnRunAway?.Invoke(false);// false means crime is a fail.
                 _currentFightDuration = _criminal.RunningAwayFightDuration;

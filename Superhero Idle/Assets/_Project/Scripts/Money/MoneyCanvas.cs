@@ -64,6 +64,7 @@ namespace SuperheroIdle
             while (DataManager.TotalMoney > 0)
             {
                 SpawnSpendMoney(phaseUnlocker);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
         }
@@ -72,6 +73,7 @@ namespace SuperheroIdle
             while (DataManager.TotalMoney > 0)
             {
                 SpawnSpendMoney(phoneBooth);
+                AudioEvents.OnPlaySpendMoney?.Invoke();
                 yield return _waitforSpendMoneyDelay;
             }
         }

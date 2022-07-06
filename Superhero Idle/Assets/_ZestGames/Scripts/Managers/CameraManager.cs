@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cinemachine;
 using System;
+using SuperheroIdle;
 
 namespace ZestGames
 {
@@ -14,11 +15,11 @@ namespace ZestGames
 
         [Header("-- SHAKE SETUP --")]
         private CinemachineBasicMultiChannelPerlin _gameplayCMBasicPerlin;
-        private bool _shakeStarted = false;
+        private bool _shakeForAWhileStarted = false;
         private float _shakeDuration = 1f;
         private float _shakeTimer;
 
-        public static Action OnShakeCam;
+        public static Action OnShakeCamForAWhile;
 
         private void Awake()
         {
@@ -35,19 +36,23 @@ namespace ZestGames
         private void Start()
         {
             GameEvents.OnGameStart += () => gameplayCM.Priority = 3;
-            OnShakeCam += () => _shakeStarted = true;
+            OnShakeCamForAWhile += () => _shakeForAWhileStarted = true;
 
             UpgradeEvents.OnOpenUpgradeCanvas += EnableUpgradeCanvasCam;
             UpgradeEvents.OnCloseUpgradeCanvas += DisableUpgradeCanvasCam;
+            PlayerEvents.OnStartFighting += StartShakingCam;
+            PlayerEvents.OnStopFighting += StopShakingCam;
         }
 
         private void OnDisable()
         {
             GameEvents.OnGameStart -= () => gameplayCM.Priority = 3;
-            OnShakeCam -= () => _shakeStarted = true;
+            OnShakeCamForAWhile -= () => _shakeForAWhileStarted = true;
  
             UpgradeEvents.OnOpenUpgradeCanvas -= EnableUpgradeCanvasCam;
             UpgradeEvents.OnCloseUpgradeCanvas -= DisableUpgradeCanvasCam;
+            PlayerEvents.OnStartFighting -= StartShakingCam;
+            PlayerEvents.OnStopFighting -= StopShakingCam;
         }
 
         private void Update()
@@ -65,19 +70,23 @@ namespace ZestGames
         }
         private void ShakeCamForAWhile()
         {
-            if (_shakeStarted)
+            if (_shakeForAWhileStarted)
             {
-                _gameplayCMBasicPerlin.m_AmplitudeGain = 1f;
+                StartShakingCam();
 
                 _shakeTimer -= Time.deltaTime;
                 if (_shakeTimer <= 0f)
                 {
-                    _shakeStarted = false;
+                    _shakeForAWhileStarted = false;
                     _shakeTimer = _shakeDuration;
 
-                    _gameplayCMBasicPerlin.m_AmplitudeGain = 0f;
+                    StopShakingCam();
                 }
             }
         }
+        private void StartShakingCam() => _gameplayCMBasicPerlin.m_AmplitudeGain = 1f;
+        private void StartShakingCam(Criminal criminal) => _gameplayCMBasicPerlin.m_AmplitudeGain = 0.5f;
+        private void StopShakingCam() => _gameplayCMBasicPerlin.m_AmplitudeGain = 0f;
+        private void StopShakingCam(Criminal criminal) => _gameplayCMBasicPerlin.m_AmplitudeGain = 0f;
     }
 }

@@ -73,9 +73,10 @@ namespace SuperheroIdle
                 Vector2 travel = GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform) - _rectTransform.anchoredPosition;
                 _rectTransform.Translate(travel * 10f * Time.deltaTime, _camera.transform);
 
-
                 if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phaseUnlocker.MoneyTransform)) < 25f)
+                {
                     gameObject.SetActive(false);
+                }
 
                 if (Time.time >= _disableTime)
                     gameObject.SetActive(false);
@@ -87,7 +88,9 @@ namespace SuperheroIdle
 
 
                 if (Vector2.Distance(_rectTransform.anchoredPosition, GetWorldPointToScreenPoint(_phoneBooth.MoneyImageTransform)) < 25f)
+                {
                     gameObject.SetActive(false);
+                }
 
                 if (Time.time >= _disableTime)
                     gameObject.SetActive(false);

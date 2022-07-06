@@ -16,12 +16,13 @@ namespace ZestGames
         private SettingsManager _settingsManager;
         private DataManager _dataManager;
         private CrimeManager _crimeManager;
+        private PhaseManager _phaseManager;
 
         private void Init()
         {
             Application.targetFrameRate = 240;
             // TODO: Check for DOTween capacity requirement.
-            DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity(19530, 50);
+            DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity(48825, 50);
 
             objectPooler.Init(this);
 
@@ -39,6 +40,8 @@ namespace ZestGames
             _uiManager.Init(this);
             _crimeManager = GetComponent<CrimeManager>();
             _crimeManager.Init(this);
+            _phaseManager = GetComponent<PhaseManager>();
+            _phaseManager.Init(this);
             #endregion
 
             UiEvents.OnUpdateCollectableText?.Invoke(DataManager.TotalMoney);

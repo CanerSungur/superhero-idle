@@ -53,7 +53,6 @@ namespace SuperheroIdle
 
             EnableTrigger();
             EntryPosition = transform.GetChild(1).position;
-            _consumedMoney = 0;
             DoorIsOpen = IsActivated = PlayerIsInArea = false;
             
             UpdateRequiredMoney();
@@ -68,6 +67,11 @@ namespace SuperheroIdle
         private void OnEnable()
         {
             Init();
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveData();
         }
 
         private void OnDisable()
@@ -154,6 +158,7 @@ namespace SuperheroIdle
             if (_consumedMoney == _requiredMoney)
             {
                 MoneyCanvas.Instance.StopSpendingMoney();
+                AudioHandler.PlayAudio(Enums.AudioType.PhoneBoothUnlock);
                 Activate();
             }
         }

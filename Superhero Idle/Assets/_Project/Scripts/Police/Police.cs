@@ -80,7 +80,7 @@ namespace SuperheroIdle
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            if (!GetComponentInParent<Criminal>().GettingTakenToPoliceCar)
+            if (!GetComponentInParent<Criminal>().GettingTakenToPoliceCar && _spawnedCar)
                 GetComponentInParent<Criminal>().OnGetTakenToPoliceCar?.Invoke(_spawnedCar);
         }
         private void DropCriminal()

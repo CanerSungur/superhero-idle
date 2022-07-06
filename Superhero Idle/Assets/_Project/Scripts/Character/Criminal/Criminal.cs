@@ -60,8 +60,8 @@ namespace SuperheroIdle
         private void OnEnable()
         {
             //_runningAwayValue = (int)(value * 0.5f);
-            if (BelongedPhase)
-                _currentValue = DefaultValue;
+            //if (BelongedPhase)
+            //    _currentValue = DefaultValue;
 
             RightCarryPoint = transform.GetChild(transform.childCount - 1);
             LeftCarryPoint = transform.GetChild(transform.childCount - 2);
@@ -128,6 +128,8 @@ namespace SuperheroIdle
             CrimeEvents.OnCrimeEnded?.Invoke(BelongedPhase);
 
             StartSpawningMoney(0.05f, _currentValue, transform.position);
+            AudioHandler.PlayAudio(Enums.AudioType.MoneySpawn);
+            AudioEvents.OnStopPunch?.Invoke();
 
             if (PoliceManager.GetNextFreePoliceCar() != null)
             {
@@ -187,6 +189,7 @@ namespace SuperheroIdle
         {
             BelongedPhase = phase;
             _fightDifficulty = BelongedPhase.Number;
+            _currentValue = DefaultValue;
             UpdateFightDuration();
         }
             

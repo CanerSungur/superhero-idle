@@ -144,11 +144,13 @@ namespace SuperheroIdle
         #region ANIMATOR FUNCTIONS
         private void EnableCanvas()
         {
+            AudioHandler.PlayAudio(Enums.AudioType.UpgradeMenu);
             _animator.SetTrigger(_openID);
             IsOpen = true;
         }
         private void DisableCanvas()
         {
+            AudioHandler.PlayAudio(Enums.AudioType.UpgradeMenu);
             _animator.SetTrigger(_closeID);
             IsOpen = false;
         }
