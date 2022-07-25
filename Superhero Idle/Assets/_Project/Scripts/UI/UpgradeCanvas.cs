@@ -133,7 +133,11 @@ namespace SuperheroIdle
         #endregion
 
         #region CLICK TRIGGER FUNCTIONS
-        private void CloseCanvasClicked() => _closeButton.TriggerClick(CloseCanvas);
+        private void CloseCanvasClicked()
+        {
+            _closeButton.interactable = _emptySpaceButton.interactable = false;
+            _closeButton.TriggerClick(CloseCanvas);
+        }
         private void MovementSpeedUpgradeClicked() => movementSpeedUpgradeButton.TriggerClick(UpgradeMovementSpeed);
         private void ChangeSpeedUpgradeClicked() => changeSpeedUpgradeButton.TriggerClick(UpgradeChangeSpeed);
         private void FightSpeedUpgradeClicked() => fightSpeedUpgradeButton.TriggerClick(UpgradeFightSpeed);
@@ -145,12 +149,16 @@ namespace SuperheroIdle
         private void EnableCanvas()
         {
             AudioHandler.PlayAudio(Enums.AudioType.UpgradeMenu);
+            _closeButton.interactable = _emptySpaceButton.interactable = true;
             _animator.SetTrigger(_openID);
             IsOpen = true;
+
+            CheckForMoneySufficiency();
         }
         private void DisableCanvas()
         {
             AudioHandler.PlayAudio(Enums.AudioType.UpgradeMenu);
+            _closeButton.interactable = _emptySpaceButton.interactable = false;
             _animator.SetTrigger(_closeID);
             IsOpen = false;
         }
