@@ -27,7 +27,7 @@ Player earns money by stopping crime and use that money for upgrades.
 - **Enhance City**\
   _New sections of the city can be activated by spending money. More criminals will be spawned._
 - **Upgrade**\
-  _There are upgrades. Player can upgrade anytime._
+  _There are upgrades. Player can upgrade anytime. Movement speed, cloth changing speed, fight speed, income increase and cost decrease._
 - **Stopping Crime**\
   _When crime is happening or criminal is running away or criminal is in motion of a crime, Player can interact with criminal and beat him._
 - **Ambulance - Police**\
@@ -38,20 +38,17 @@ Here are some visuals of the game;
 
 Changing Outfit            | Activate Phonebooth 
 :-------------------------:|:-------------------------:
-![]()  |  ![]()
-
-Civillians                 | Criminals 
-:-------------------------:|:-------------------------:
-![]()  |  ![]()
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGNmMzlwMnI4NXR6OWt5eXJ3NjZyc3F2amNoN3cxbTFhYndjbzVxMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MhxhWVSSUD1ExIypqR/giphy.gif)  |  ![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHJrMjduM3I0aGVqZm9kMXIwZnIydG51ODQ2MnFtd2swbHZ5Z3MzayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/IKX1l0TSpImES1rvol/giphy.gif)
 
 Enhance City               | Upgrade
 :-------------------------:|:-------------------------:
-![]()  |  ![]()
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2hhbGNhbW94YjlhZ2xuczdoZHJzZXVnem9hYmptNGR1dTcwbHBzdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jW8XMvEwWsB8c2eEAG/giphy.gif)  |  ![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2puNWcycHIzbjF4MGpkZzNwZHU1ZGxmNGN4OXRmNGpjZ3lxMnhwZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XyE99oS4He86kZtKEb/giphy.gif)
 
 Robbing Civillian          | Robbing ATM
 :-------------------------:|:-------------------------:
-![]()  |  ![]()
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWdiYzd2NmJodmRyaDdmMjdqY29qcm96Ynl4bjFmNTlyZHVlMHZnaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3ybIUCVh88tay3kDB/giphy.gif)  |  ![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcm5idGQ3OGw3a3g2NXVyOXF5anh5cmJwZWZyOWRjOWdqZGNrazQ1ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DdZJKiAry7PUNhiIty/giphy.gif)
 
-Ambulance - Police         | Upgrade
+Stopping Criminal           | Ambulance - Police 
 :-------------------------:|:-------------------------:
-![]()  |  ![]()
+![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHIwaWY0dGF5ZTIybjVhejdpdWZ5anRrN2h2bTU4NnZ5bmtvZno5bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0Eoyh4C7tlb6sNbcZe/giphy.gif)  |  ![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTZtNWZjYWZwN2Jmc3J3ZGE5d3Nxdm9uOWw0a2lwam4ycjJsaTByNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uzVBBNsiVhbAKgMi55/giphy.gif)
+
